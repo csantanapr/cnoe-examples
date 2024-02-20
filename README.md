@@ -29,7 +29,7 @@ idpbuilder create -p idpbuilder/examples/basic/package2
 ```
 ### ref-implementattion
 ```shell
-idpbuilder create -p idpbuilder/examples/ref-implementattion
+idpbuilder create -p idpbuilder/examples/ref-implementation
 ```
 
 
