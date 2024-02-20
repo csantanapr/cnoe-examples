@@ -21,15 +21,15 @@ In the terminal run `idpbuilder` pointing to a directory with the example.
 
 ### basic/package1
 ```shell
-idbbuilder create -p idpbuilder/examples/basic/package1
+idpbuilder create -p idpbuilder/examples/basic/package1
 ```
 ### basic/package2
 ```shell
-idbbuilder create -p idpbuilder/examples/basic/package2
+idpbuilder create -p idpbuilder/examples/basic/package2
 ```
-### basic/package1
+### ref-implementattion
 ```shell
-idbbuilder create -p idpbuilder/examples/ref-implementattion
+idpbuilder create -p idpbuilder/examples/ref-implementattion
 ```
 
 
