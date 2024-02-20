@@ -1,0 +1,6 @@
+idpbuilder
+bin/*
+.DS_Store
+cover.out
+__debug*
+.vscode
