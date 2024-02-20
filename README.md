@@ -3,12 +3,12 @@
 Examples to showcase use cases for Internal Developer Platform on top of Kubernetes
 
 ## Using DevPod
-- Install and open DevPod
+- Install and open [DevPod](https://devpod.sh)
 - Setup a Cloud Provider (ie. AWS)
 - Open Workspace at https://github.com/csantanapr/cnoe-examples, select a cloud provider VM and Visual Studio Desktop as IDE
 
 ## Using Github Codespaces
-- From github repository select open with CodeSpaces
+- From github repository select Code, Codespaces, create codespace on main
 - After CodeSpaces is up select from menu Open in Visual Studio Desktop
 
 ## Port Forwarding
