@@ -22,7 +22,8 @@ echo "complete -F __start_kubectl k" >> $HOME/.bashrc
 
 # Compile idpbuilder
 echo "Compiling idpbuilder"
+export GOPROXY=direct
 export PATH=$PATH:/usr/local/go/bin
 git clone --depth 1 https://github.com/cnoe-io/idpbuilder && cd idpbuilder && make build
 # Add idpbuilder to PATH
-echo "export PATH=\$PATH://workspaces/cnoe-examples/idpbuilder" >> $HOME/.bashrc
+echo "export PATH=\$PATH:/home/vscode/idpbuilder/idpbuilder" >> $HOME/.bashrc
