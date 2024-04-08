@@ -7,8 +7,9 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
-  "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/vscode/go/bin",
-    "GOPATH": "/home/vscode/go"
+  "workspaceFolder": "/home/vscode/idpbuilder",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/idpbuilder,type=bind",
+  "hostRequirements": {
+    "cpus": 4
   }
 }
