@@ -114,10 +114,10 @@ data:
           host: cnoe.localtest.me
           username: ${GITEA_USERNAME}
           password: ${GITEA_PASSWORD}
-    #  github:
-    #    - host: github.com
-    #      apps:
-    #        - $include: github-integration.yaml
+      github:
+        - host: github.com
+          apps:
+            - $include: github-integration.yaml
     #    - host: github.com
     #      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
     #      # about setting up the GitHub integration here: https://backstage.io/docs/getting-started/configuration#setting-up-a-github-integration
@@ -167,9 +167,8 @@ data:
         # Examples from a public GitHub repository.
         - type: url
           target: https://cnoe.localtest.me/gitea/giteaAdmin/idpbuilder-localdev-backstage-templates-entities/raw/branch/main/catalog-info.yaml
-        ## Uncomment these lines to add an example org
-        # - type: url
-        #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
+        - type: url
+          target: https://github.com/csantanapr-cnoe-demos-private/backstage-templates-on-eks/blob/main/catalog-info.yaml
         #   rules:
         #     - allow: [User, Group]
     kubernetes:
@@ -288,6 +287,11 @@ spec:
                     - key: k8s-config.yaml
                       path: k8s-config.yaml
                   name: k8s-config
+              - secret:
+                  name: integrations
+                  items:
+                    - key: github-integration.yaml
+                      path: github-integration.yaml
 ---
 apiVersion: apps/v1
 kind: StatefulSet
