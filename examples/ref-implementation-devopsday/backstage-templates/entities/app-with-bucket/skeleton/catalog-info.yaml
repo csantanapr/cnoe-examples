@@ -19,7 +19,7 @@ metadata:
     backstage.io/kubernetes-namespace: default
     argocd/app-name: ${{values.name | dump}}
   links:
-    - url: https://devopsday.demo.cloud-native-start.com:8443/gitea/giteaAdmin/${{values.name | dump}}
+    - url: ${{values.url}}
       title: Repo URL
       icon: github
 spec:

@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  description: Adds a Go application with AWS resources - 2
+  description: Adds a Go application with AWS resources - 4
   name: app-with-aws-resources
   title: Add a Go App with AWS resources
 spec:
@@ -78,6 +78,7 @@ spec:
         url: ./skeleton
         values:
           name: ${{parameters.name}}
+          url: https://devopsday.demo.cloud-native-start.com:8443/gitea/giteaAdmin/${{parameters.name}}
     - action: roadiehq:utils:serialize:yaml
       id: serialize
       input:

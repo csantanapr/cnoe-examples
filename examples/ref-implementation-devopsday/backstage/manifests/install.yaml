@@ -414,7 +414,7 @@ spec:
   secretStoreRef:
     name: gitea
     kind: ClusterSecretStore
-  refreshInterval: "0"
+  refreshInterval: "30s"
   target:
     name: gitea-credentials
   data:

@@ -1,10 +1,10 @@
 #!/bin/bash
 export REPO_ROOT=$(git rev-parse --show-toplevel)
-export CNOE_HOST=ec2-18-232-146-175.compute-1.amazonaws.com
+export CNOE_HOST=devopsday.demo.cloud-native-start.com
 #./replace.sh devopsday.demo.cloud-native-start.com 8443
 set -x
 
-echo idpbuilder create --protocol https --no-exit  \
+idpbuilder create --protocol https \
   --host $CNOE_HOST \
   --port 8443 --use-path-routing --package-dir ${REPO_ROOT}/examples/ref-implementation-devopsday
   
