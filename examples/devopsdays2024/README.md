@@ -2,6 +2,8 @@
 
 Slides: [Standardization vs. Autonomy the Platform Engineering Balance](PlatformEngineering-DevOpsDayRaleigh.pdf)
 
+[![Checkout the slides](slide.jpg)](PlatformEngineering-DevOpsDayRaleigh.pdf)
+
 ### Demo:
 Have docker installed
 ```bash
@@ -29,6 +31,7 @@ kubectl get secrets -n gitea gitea-admin-secret \
 kubectl -n keycloak get secret keycloak-config \
   -o go-template='{{ range $key, $value := .data }}{{ printf "%s: %s\n" $key ($value | base64decode) }}{{ end }}'
 ```
+>WARNING: Do not expose this to the internet as the gitea password is generic please see https://github.com/cnoe-io/idpbuilder/issues/192
 
 Add crossplane credentilas
 ```bash
