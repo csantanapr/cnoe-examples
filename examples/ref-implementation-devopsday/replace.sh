@@ -15,7 +15,7 @@ NEW_PORT="$2"
 
 # Base directory to start from, "." means the current directory
 CURRENT_DIR=$(echo "${PWD##*/}")
-if [[ ${CURRENT_DIR} != "ref-implementation" ]]; then
+if [[ ${CURRENT_DIR} != "ref-implementation-devopsday" ]]; then
   echo "please run this script from the examples/ref-implementation directory"
   exit 10
 fi
@@ -25,6 +25,7 @@ BASE_DIRECTORY="."
 # and perform an in-place search and replace from 8443 to the new port
 find "$BASE_DIRECTORY" -type f -name "*.yaml" -exec sed -i "s/8443/${NEW_PORT}/g" {} +
 find "$BASE_DIRECTORY" -type f -name "*.yaml" -exec sed -i "s/cnoe\.localtest\.me/${NEW_HOST}/g" {} +
+find "$BASE_DIRECTORY" -type f -name "*.yaml" -exec sed -i "s/ec2-18-232-146-175\.compute-1\.amazonaws\.com/${NEW_HOST}/g" {} +
 
 # Remove hostname-port configuration if the new port is 443. Browsers strip 443 but keycloak still expects 443 in url.
 if [[ ${NEW_PORT} == "443" ]]; then

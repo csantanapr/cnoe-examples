@@ -1,7 +1,7 @@
 #!/bin/bash
 export REPO_ROOT=$(git rev-parse --show-toplevel)
 export CNOE_HOST=ec2-18-232-146-175.compute-1.amazonaws.com
-#./replace.sh ec2-18-232-146-175.compute-1.amazonaws.com 8443
+#./replace.sh devopsday.demo.cloud-native-start.com 8443
 set -x
 
 echo idpbuilder create --protocol https --no-exit  \

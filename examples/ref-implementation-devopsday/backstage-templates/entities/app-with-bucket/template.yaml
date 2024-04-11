@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  description: Adds a Go application with AWS resources
+  description: Adds a Go application with AWS resources - 2
   name: app-with-aws-resources
   title: Add a Go App with AWS resources
 spec:
@@ -100,14 +100,14 @@ spec:
       input:
         description: This is an example app
         # Hard coded value for this demo purposes only.
-        repoUrl: cnoe.localtest.me:8443/gitea?repo=${{parameters.name}}
+        repoUrl: devopsday.demo.cloud-native-start.com:8443/gitea?repo=${{parameters.name}}
         defaultBranch: main
     - id: create-argocd-app
       name: Create ArgoCD App
       action: cnoe:create-argocd-app
       input:
         appName: ${{parameters.name}}
-        appNamespace: default
+        appNamespace: ${{parameters.name}}
         argoInstance: in-cluster
         projectName: default
         # necessary until we generate our own cert

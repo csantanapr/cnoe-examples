@@ -13,7 +13,7 @@ metadata:
     apache-spark.cnoe.io/label-selector: env=dev,entity-id=${{values.name}}
     apache-spark.cnoe.io/cluster-name: local
   links:
-    - url: https://cnoe.localtest.me:8443/gitea
+    - url: url: https://devopsday.demo.cloud-native-start.com:8443/gitea/giteaAdmin/${{values.name | dump}}
       title: Repo URL
       icon: github
 spec:
