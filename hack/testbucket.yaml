@@ -1,0 +1,42 @@
+apiVersion: s3.aws.crossplane.io/v1beta1
+kind: Bucket
+metadata:
+  name: test-carrlos-0410
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    acl: private
+    objectOwnership: BucketOwnerPreferred
+    locationConstraint: us-west-2
+    serverSideEncryptionConfiguration:
+      rules:
+        - applyServerSideEncryptionByDefault:
+            sseAlgorithm: AES256
+  providerConfigRef:
+    name: default
+---
+apiVersion: s3.aws.crossplane.io/v1beta1
+kind: Bucket
+metadata:
+  name: test-carrlos-2-0410
+spec:
+    deletionPolicy: Delete
+    forProvider:
+      acl: private
+      locationConstraint: us-west-2
+      objectOwnership: BucketOwnerPreferred
+      paymentConfiguration:
+        payer: BucketOwner
+      publicAccessBlockConfiguration:
+        blockPublicAcls: true
+        blockPublicPolicy: true
+        ignorePublicAcls: true
+        restrictPublicBuckets: true
+      serverSideEncryptionConfiguration:
+        rules:
+        - applyServerSideEncryptionByDefault:
+            sseAlgorithm: AES256
+    managementPolicies:
+    - '*'
+    providerConfigRef:
+      name: default
