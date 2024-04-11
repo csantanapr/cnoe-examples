@@ -83,12 +83,12 @@ data:
     proxy=edge
     
     # hostname configuration
-    hostname=devopsday.demo.cloud-native-start.com
+    hostname=cnoe.localtest.me
     hostname-port=8443
     http-relative-path=keycloak
     
     # the admin url requires its own configuration to reflect correct url
-    hostname-admin=devopsday.demo.cloud-native-start.com:8443
+    hostname-admin=cnoe.localtest.me:8443
     
     hostname-debug=true
     

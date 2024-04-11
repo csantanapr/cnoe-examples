@@ -18,7 +18,7 @@ spec:
                 name: keycloak
                 port:
                   name: http
-    - host: devopsday.demo.cloud-native-start.com
+    - host: cnoe.localtest.me
       http:
         paths:
           - path: /keycloak
