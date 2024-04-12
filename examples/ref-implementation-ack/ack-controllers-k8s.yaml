@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: iam-controller
+  name: aws-controllers-k8s
   namespace: argocd
 spec:
   project: default
@@ -13,11 +13,25 @@ spec:
         releaseName: iam-controller
         valueFiles:
           - $values/iam-controller/values.yaml
+    - chart: aws-controllers-k8s/ec2-chart
+      repoURL: public.ecr.aws
+      targetRevision: '1.2.5'
+      helm:
+        releaseName: ec2-controller
+        valueFiles:
+          - $values/ec2-controller/values.yaml
+    - chart: aws-controllers-k8s/eks-chart
+      repoURL: public.ecr.aws
+      targetRevision: '1.3.4'
+      helm:
+        releaseName: eks-controller
+        valueFiles:
+          - $values/eks-controller/values.yaml
     - repoURL: cnoe://aws-controllers-k8s/manifests
       targetRevision: HEAD
       ref: values
   destination:
-    server: "https://kubernetes.default.svc"
+    name: in-cluster
     namespace: ack-system
   syncPolicy:
     automated:
