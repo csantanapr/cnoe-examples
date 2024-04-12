@@ -15,7 +15,7 @@ data:
         }
         ready
     
-        rewrite name cnoe.localtest.me ingress-nginx-controller.ingress-nginx.svc.cluster.local
+        rewrite name ack.demo.cloud-native-start.com ingress-nginx-controller.ingress-nginx.svc.cluster.local
     
         kubernetes cluster.local in-addr.arpa ip6.arpa {
            pods insecure

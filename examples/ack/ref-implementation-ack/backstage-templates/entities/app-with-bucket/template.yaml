@@ -78,7 +78,7 @@ spec:
         url: ./skeleton
         values:
           name: ${{parameters.name}}
-          url: https://cnoe.localtest.me:8443/gitea/giteaAdmin/${{parameters.name}}
+          url: https://ack.demo.cloud-native-start.com:8443/gitea/giteaAdmin/${{parameters.name}}
     - action: roadiehq:utils:serialize:yaml
       id: serialize
       input:
@@ -101,7 +101,7 @@ spec:
       input:
         description: This is an example app
         # Hard coded value for this demo purposes only.
-        repoUrl: cnoe.localtest.me:8443/gitea?repo=${{parameters.name}}
+        repoUrl: ack.demo.cloud-native-start.com:8443/gitea?repo=${{parameters.name}}
         defaultBranch: main
     - id: create-argocd-app
       name: Create ArgoCD App

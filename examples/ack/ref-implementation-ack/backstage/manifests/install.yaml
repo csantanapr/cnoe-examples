@@ -70,7 +70,7 @@ data:
   app-config.yaml: |
     app:
       title: CNOE Backstage
-      baseUrl: https://cnoe.localtest.me:8443
+      baseUrl: https://ack.demo.cloud-native-start.com:8443
     organization:
       name: CNOE
     backend:
@@ -80,7 +80,7 @@ data:
       # auth:
       #   keys:
       #     - secret: ${BACKEND_SECRET}
-      baseUrl: https://cnoe.localtest.me:8443
+      baseUrl: https://ack.demo.cloud-native-start.com:8443
       listen:
         port: 7007
         # Uncomment the following host directive to bind to specific interfaces
@@ -90,7 +90,7 @@ data:
         # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
         # Default Helmet Content-Security-Policy values can be removed by setting the key to false
       cors:
-        origin: https://cnoe.localtest.me:8443
+        origin: https://ack.demo.cloud-native-start.com:8443
         methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
         credentials: true
       database:
@@ -106,12 +106,12 @@ data:
 
     integrations:
       gitea:
-        - baseUrl: https://cnoe.localtest.me:8443/gitea
-          host: cnoe.localtest.me:8443
+        - baseUrl: https://ack.demo.cloud-native-start.com:8443/gitea
+          host: ack.demo.cloud-native-start.com:8443
           username: ${GITEA_USERNAME}
           password: ${GITEA_PASSWORD}
-        - baseUrl: https://cnoe.localtest.me/gitea
-          host: cnoe.localtest.me
+        - baseUrl: https://ack.demo.cloud-native-start.com/gitea
+          host: ack.demo.cloud-native-start.com
           username: ${GITEA_USERNAME}
           password: ${GITEA_PASSWORD}
     #  github:
@@ -166,7 +166,7 @@ data:
       locations:
         # Examples from a public GitHub repository.
         - type: url
-          target: https://cnoe.localtest.me/gitea/giteaAdmin/idpbuilder-localdev-backstage-templates-entities/raw/branch/main/catalog-info.yaml
+          target: https://ack.demo.cloud-native-start.com/gitea/giteaAdmin/idpbuilder-localdev-backstage-templates-entities/raw/branch/main/catalog-info.yaml
         ## Uncomment these lines to add an example org
         # - type: url
         #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
@@ -184,7 +184,7 @@ data:
         - type: 'config'
           instances:
             - name: in-cluster
-              url: https://cnoe.localtest.me:8443/argocd
+              url: https://ack.demo.cloud-native-start.com:8443/argocd
               username: admin
               password: ${ARGOCD_ADMIN_PASSWORD}
     argoWorkflows:
@@ -375,14 +375,14 @@ spec:
     template:
       engineVersion: v2
       data:
-        BACKSTAGE_FRONTEND_URL: https://cnoe.localtest.me:8443/backstage
+        BACKSTAGE_FRONTEND_URL: https://ack.demo.cloud-native-start.com:8443/backstage
         POSTGRES_HOST: postgresql.backstage.svc.cluster.local
         POSTGRES_PORT: '5432'
         POSTGRES_DB: backstage
         POSTGRES_USER: backstage
         POSTGRES_PASSWORD: "{{.POSTGRES_PASSWORD}}"
-        ARGO_WORKFLOWS_URL: https://cnoe.localtest.me:8443/argo-workflows
-        KEYCLOAK_NAME_METADATA: https://cnoe.localtest.me:8443/keycloak/realms/cnoe/.well-known/openid-configuration
+        ARGO_WORKFLOWS_URL: https://ack.demo.cloud-native-start.com:8443/argo-workflows
+        KEYCLOAK_NAME_METADATA: https://ack.demo.cloud-native-start.com:8443/keycloak/realms/cnoe/.well-known/openid-configuration
         KEYCLOAK_CLIENT_SECRET: "{{.BACKSTAGE_CLIENT_SECRET}}"
         ARGOCD_AUTH_TOKEN: "argocd.token={{.ARGOCD_SESSION_TOKEN}}"
         ARGO_CD_URL: 'https://argocd-server.argocd.svc.cluster.local/api/v1/'
@@ -445,7 +445,7 @@ spec:
                 name: backstage
                 port:
                   name: http
-    - host: cnoe.localtest.me
+    - host: ack.demo.cloud-native-start.com
       http:
         paths:
           - path: /
