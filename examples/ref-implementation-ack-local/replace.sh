@@ -5,13 +5,14 @@
 set -ex
 # Check if the new port number is provided as an argument
 if [ "$#" -ne 3 ]; then
-    echo "Usage: OLD_HOST NEW_HOST NEW_PORT"
+    echo "Usage: NEW_HOST NEW_PORT OLD_HOST"
     exit 1
 fi
 
 # Assign the first script argument to NEW_PORT
 NEW_HOST="$1"
 NEW_PORT="$2"
+OLD_HOST="$3"
 
 # Base directory to start from, "." means the current directory
 CURRENT_DIR=$(echo "${PWD##*/}")
