@@ -1,6 +1,6 @@
 #!/bin/bash
 export REPO_ROOT=$(git rev-parse --show-toplevel)
-export CNOE_HOST=devopsday.demo.cloud-native-start.com
+export CNOE_HOST=ack.demo.cloud-native-start.com
 #./replace.sh cnoe.localtest.me 8443 devopsday.demo.cloud-native-start.com
 #./replace.sh ack.demo.cloud-native-start.com 8443 cnoe.localtest.me
 set -x
