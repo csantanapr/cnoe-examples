@@ -7,4 +7,4 @@ set -x
 
 idpbuilder create --protocol https \
   --host $CNOE_HOST \
-  --port 8443 --use-path-routing --package-dir ${REPO_ROOT}/examples/ref-implementation-ack
+  --port 8443 --use-path-routing --package-dir ${REPO_ROOT}/examples/ack/ref-implementation-ack
