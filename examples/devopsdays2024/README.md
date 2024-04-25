@@ -5,35 +5,10 @@ Slides: [Standardization vs. Autonomy the Platform Engineering Balance](Platform
 [![Checkout the slides](slide.jpg)](PlatformEngineering-DevOpsDayRaleigh.pdf)
 
 ### Demo:
-Have docker installed
-```bash
-export REPO_ROOT=$(git rev-parse --show-toplevel)
-${REPO_ROOT}/hack/run-local.sh
-```
-#### Accessing UIs
-- Argo CD: https://cnoe.localtest.me:8443/argocd
-- Argo Workflows: https://cnoe.localtest.me:8443/argo-workflows
-- Backstage: https://cnoe.localtest.me:8443/
-- Gitea: https://cnoe.localtest.me:8443/gitea
-- Keycloak: https://cnoe.localtest.me:8443/keycloak/admin/master/console/
+Follow the tutorial here https://github.com/cnoe-io/idpbuilder/tree/main/examples/ref-implementation#readme
 
-### Access Passwords
-```bash
-# argoCD password. username is admin.
-kubectl -n argocd get secret argocd-initial-admin-secret \
-  -o go-template='{{ range $key, $value := .data }}{{ printf "%s: %s\n" $key ($value | base64decode) }}{{ end }}'
 
-# gitea admin credentials
-kubectl get secrets -n gitea gitea-admin-secret \
-  -o go-template='{{ range $key, $value := .data }}{{ printf "%s: %s\n" $key ($value | base64decode) }}{{ end }}'
-
-# access backstage and argo-workflow
-kubectl -n keycloak get secret keycloak-config \
-  -o go-template='{{ range $key, $value := .data }}{{ printf "%s: %s\n" $key ($value | base64decode) }}{{ end }}'
-```
->WARNING: Do not expose this to the internet as the gitea password is generic please see https://github.com/cnoe-io/idpbuilder/issues/192
-
-Add crossplane credentilas
+Easy way to create crossplane credentilas using environment variables
 ```bash
 export AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID>
 export AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY>
