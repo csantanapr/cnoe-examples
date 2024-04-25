@@ -15,15 +15,8 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 
 # setup autocomplete for kubectl and alias k
+sudo apt-get update -y && sudo apt-get install bash-completion -y
 mkdir $HOME/.kube
 echo "source <(kubectl completion bash)" >> $HOME/.bashrc
 echo "alias k=kubectl" >> $HOME/.bashrc
 echo "complete -F __start_kubectl k" >> $HOME/.bashrc
-
-# Compile idpbuilder
-echo "Compiling idpbuilder"
-export GOPROXY=direct
-export PATH=$PATH:/usr/local/go/bin
-git clone --depth 1 https://github.com/cnoe-io/idpbuilder && cd idpbuilder && make build
-# Add idpbuilder to PATH
-echo "export PATH=\$PATH:/home/vscode/idpbuilder/idpbuilder" >> $HOME/.bashrc
