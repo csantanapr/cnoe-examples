@@ -1,27 +1,41 @@
 # Deploy EKS Cluster using ACK from CNOE Backstage
 
 ## Setup
-
-Using AWS region `us-west-2` create a Cloud9 environment using the following Cloud Formation stack [cloud9-dynamic-template.yaml](../../hack/cfn/cloud9-dynamic-template.yaml)
-
-Select "Upload a tempalte file"
+- Using AWS region `us-west-2` create a Cloud9 environment using the following Cloud Formation stack [cloud9-dynamic-template.yaml](../../hack/cfn/cloud9-dynamic-template.yaml)
+- Select "Upload a tempalte file"
+- When Stack is complete get the URLs from the Output variables `Cloud9IDE` and `PreviewAppUrl`
+- Open Cloud9 using URL
 
 Clone this repository
 ```shell
 git clone https://github.com/csantanapr/cnoe-examples.git
-``
+```
 
+Copy extra Backstage templates for ACK
+```shell
+cp -r cnoe-examples/examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
+```
+
+(Optional) Delete not required packages
+```shell
+rm idpbuilder/examples/ref-implementation/spark-operator.yaml
+rm idpbuilder/examples/ref-implementation/crossplane.yaml
+rm idpbuilder/examples/ref-implementation/crossplane-providers.yaml
+rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
+rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
+```
+
+Run CNOE
 ```bash
 idpbuilder create \
   --use-path-routing \
-  --package-dir examples/ref-implementation \
-  --package-dir cnoe-examples/ack
+  --package-dir idpbuilder/examples/ref-implementation \
+  --package-dir cnoe-examples/examples/ack/aws-controllers-k8s
 ```
-
-Get the URL from the output Cloud Formation `PreviewAppUrl`
 
 #### Main UI
 - Backstage: https://${PreviewAppUrl}/
+>The ${PreviewAppUrl} can be found in Cloud Formation Output
 
 #### Other UIs
 - Argo CD: https://${PreviewAppUrl}/argocd

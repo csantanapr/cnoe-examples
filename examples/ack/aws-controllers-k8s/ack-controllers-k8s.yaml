@@ -27,7 +27,7 @@ spec:
         releaseName: eks-controller
         valueFiles:
           - $values/eks-controller/values.yaml
-    - repoURL: cnoe://aws-controllers-k8s/manifests
+    - repoURL: cnoe://manifests
       targetRevision: HEAD
       ref: values
   destination:

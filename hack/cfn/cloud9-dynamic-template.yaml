@@ -44,14 +44,10 @@ Parameters:
   WorkshopInstanceType:
     Description: Workshop Cloud9 instance type
     Type: String
-    Default: t3.medium
+    Default: m5.4xlarge
     AllowedValues:
-      - t2.micro
-      - t3.micro
-      - t3.small
-      - t3.medium
-      - t3.large
-      - m5.large
+      - t3.xlarge
+      - m5.xlarge
       - m5.2xlarge
       - m5.4xlarge
     ConstraintDescription: Must be a valid Cloud9 instance type
