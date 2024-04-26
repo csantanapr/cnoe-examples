@@ -13,6 +13,6 @@
     "cpus": 4
   },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/vscode/idpbuilder"
+    "PATH": "${containerEnv:PATH}:/home/vscode/idpbuilder/idpbuilder"
   }
 }
