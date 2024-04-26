@@ -25,10 +25,20 @@ rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
 rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
 ```
 
+Replace the hostname, use only the hostname (without https://) from `PreviewAppUrl`
+```bash
+cd idpbuilder/examples/ref-implementation
+./replace.sh ${PreviewAppUrl_HOSTNAME} 443
+cd -
+```
+
 Run CNOE
 ```bash
 idpbuilder create \
   --use-path-routing \
+  --protocol http  \
+  --host ${PreviewAppUrl_HOSTNAME} \
+  --port 8080 \
   --package-dir idpbuilder/examples/ref-implementation \
   --package-dir cnoe-examples/examples/ack/aws-controllers-k8s
 ```
@@ -60,9 +70,3 @@ Use the username **`user1`** and the password value given by `USER_PASSWORD` fie
 `user1` is an admin user who has access to everything in the cluster, while `user2` is a regular user with limited access.
 Both users use the same password retrieved above.
 
-If you want to create a new user or change existing users:
-
-1. Go to the [Keycloak UI](https://${PreviewAppUrl}/keycloak/admin/master/console/).
-Login with the username `cnoe-admin`. Password is the `KEYCLOAK_ADMIN_PASSWORD` field from the command above.
-2. Select `cnoe` from the realms drop down menu.
-3. Select users tab.

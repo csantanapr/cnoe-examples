@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  description: "1: Create EKS Cluster"
+  description: "Create EKS Cluster"
   name: eks-cluster
-  title: "1: Create EKS Cluster"
+  title: "Create EKS Cluster"
 spec:
   owner: guest
   type: service
@@ -48,7 +48,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}manifests
         catalogInfoPath: 'catalog-info.yaml'
 
   output:

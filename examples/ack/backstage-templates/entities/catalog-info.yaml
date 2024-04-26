@@ -5,7 +5,4 @@ metadata:
   description: A collection of example templates
 spec:
   targets:
-    - ./basic/template.yaml
-    - ./argo-workflows/template.yaml
-    - ./app-with-bucket/template.yaml
     - ./eks-cluster/template.yaml
