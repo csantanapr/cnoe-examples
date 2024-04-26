@@ -11,11 +11,6 @@ Parameters:
     Type: String
     Default: "main"
 
-  DefaultIdpBuilderExamplesRepo:
-    Description: Default idpbuilder git branch to use when cloning the repo
-    Type: String
-    Default: "https://github.com/cnoe-io/idpbuilder"
-
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
     Type: String
@@ -44,7 +39,7 @@ Parameters:
   WorkshopInstanceType:
     Description: Workshop Cloud9 instance type
     Type: String
-    Default: m5.4xlarge
+    Default: m5.xlarge
     AllowedValues:
       - t3.xlarge
       - m5.xlarge
@@ -453,7 +448,6 @@ Resources:
             - !Sub export ACCOUNT_ID=${AWS::AccountId}
             - !Sub export SIZE=${WorkshopInstanceVolumeSize}
             - !Sub export DEFAULT_GIT_BRANCH=${DefaultIdpBuilderBranch}
-            - !Sub export DEFAULT_GIT_REPO=${DefaultIdpBuilderExamplesRepo}
             ### After changing disk size, it won't be reflected in OS until reboot ###
             - |
               /usr/bin/python3 -m pip install --user --upgrade boto3
@@ -507,22 +501,30 @@ Resources:
               # Install jq (json query)
               sudo yum -y -q install jq
 
+              # Install Kind
+              sudo curl --silent --location -o /usr/local/bin/kind https://kind.sigs.k8s.io/dl/v0.22.0/kind-linux-amd64
+              chmod +x /usr/local/bin/kind
+
               # Install kubectl
               sudo curl --silent --location -o /usr/local/bin/kubectl \
                 https://s3.${AWS_REGION}.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl
               sudo chmod +x /usr/local/bin/kubectl
 
               # populate kubectl bash-completion
-              echo "source <(kubectl completion bash)" >> ~/.bash_completion
-              echo ". /etc/profile.d/bash_completion.sh" >> ~/.bashrc
-              echo ". ~/.bash_completion" >> ~/.bashrc
+              echo "source <(kubectl completion bash)" >> /home/ec2-user/.bash_completion
+              echo ". /etc/profile.d/bash_completion.sh" >> /home/ec2-user/.bashrc
+              echo ". ~/.bash_completion" >> /home/ec2-user/.bashrc
+              echo "alias k=kubectl" >> /home/ec2-user/.bashrc
 
               # Clone idpbuilder
               cd /home/ec2-user/environment/
-              git clone -b ${DEFAULT_GIT_BRANCH} ${DEFAULT_GIT_REPO}
+              git clone -b ${DEFAULT_GIT_BRANCH} https://github.com/cnoe-io/idpbuilder
               wget https://github.com/cnoe-io/idpbuilder/releases/latest/download/idpbuilder-linux-amd64.tar.gz
               tar -C /usr/local/bin -xvzf idpbuilder-linux-amd64.tar.gz idpbuilder
 
+              # Run replace script for ref-implementation example
+              cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
+              sh replace.sh $C9_PID.vfs.cloud9.$AWS_REGION.amazonaws.com 443
               ################################
               ##  End of Script For End User ##
               ################################
