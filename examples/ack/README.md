@@ -1,6 +1,7 @@
 # Deploy EKS Cluster using ACK from CNOE Backstage
 
-Create Cloud9 Environment using cloud formation template [../../hack/cfn/cloud9-dynamic-template.yaml](cloud9-dynamic-template.yaml)
+# Cloud Formation for Cloud 9 Env
+Create Cloud9 Environment using cloud formation template [cloud9-dynamic-template.yaml](../../hack/cfn/cloud9-dynamic-template.yaml)
 
 ### Setup
 
