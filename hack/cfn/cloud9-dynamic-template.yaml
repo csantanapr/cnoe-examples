@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation template for dynamic Cloud 9 setup. Creates and bootstraps Cloud9 instance. https://github.com/aws-samples/aws-cloud9-bootstrapping-example
-Parameters:  
+Parameters:
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
     Type: String
@@ -51,12 +51,12 @@ Parameters:
       - m5.4xlarge
     ConstraintDescription: Must be a valid Cloud9 instance type
 
-  WorkshopInstanceVolumeSize: 
+  WorkshopInstanceVolumeSize:
     Type: Number
-    Description: The Size in GB of the Cloud9 Instance Volume. 
+    Description: The Size in GB of the Cloud9 Instance Volume.
     Default: 50
 
-  WorkshopInstanceOwner: 
+  WorkshopInstanceOwner:
     Type: String
     Description: Assumed Role and Username of Cloud9 Owner, e.g. for EE - TeamRole/MasterKey or Isengard - Superuser/username-Isengard
     Default: WSParticipantRole/Participant
@@ -356,7 +356,7 @@ Resources:
           import logging
           logger = logging.getLogger()
           logger.setLevel(logging.INFO)
-          
+
           def restart_instance(instance_id):
               logger.info('Restart EC2 instance to restart SSM Agent')
               ec2 = boto3.client('ec2')
@@ -414,21 +414,21 @@ Resources:
             finally:
               cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
 
-                      
+
 ################## SSM BOOTSRAP HANDLER ###############
   WorkshopOutputBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
 
-  WorkshopSSMDocument: 
+  WorkshopSSMDocument:
     Type: AWS::SSM::Document
-    Properties: 
+    Properties:
       Tags:
         - Key: Environment
           Value: AWS Workshop
       Content: Yaml
       DocumentType: Command
-      Content: 
+      Content:
         schemaVersion: '2.2'
         description: Bootstrap Cloud9 Instance
         mainSteps:
@@ -458,7 +458,7 @@ Resources:
               export instance_id=$(TOKEN=`curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` && curl -s -H "X-aws-ec2-metadata-token: $TOKEN"  http://169.254.169.254/latest/meta-data/instance-id)
               /usr/bin/python3 -c "import boto3
               import os
-              from botocore.exceptions import ClientError 
+              from botocore.exceptions import ClientError
               ec2 = boto3.client('ec2', region_name = os.getenv('AWS_REGION'))
               volume_info = ec2.describe_volumes(
                 Filters=[
@@ -472,8 +472,8 @@ Resources:
               )
               volume_id = volume_info['Volumes'][0]['VolumeId']
               try:
-                resize = ec2.modify_volume(    
-                  VolumeId=volume_id,    
+                resize = ec2.modify_volume(
+                  VolumeId=volume_id,
                   Size=int(os.getenv('SIZE'))
                 )
                 print(resize)
@@ -527,8 +527,18 @@ Resources:
               tar -C /usr/local/bin -xvzf idpbuilder-linux-amd64.tar.gz idpbuilder
 
               # Run replace script for ref-implementation example
-              cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
-              sh replace.sh $C9_PID.vfs.cloud9.$AWS_REGION.amazonaws.com 443
+              #cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
+              #sh replace.sh $C9_PID.vfs.cloud9.$AWS_REGION.amazonaws.com 443
+
+              # ACK Demo
+              git clone https://github.com/csantanapr/cnoe-examples.git
+              cp -r cnoe-examples/examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
+              rm idpbuilder/examples/ref-implementation/spark-operator.yaml
+              rm idpbuilder/examples/ref-implementation/crossplane.yaml
+              rm idpbuilder/examples/ref-implementation/crossplane-providers.yaml
+              rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
+              rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
+
               ################################
               ##  End of Script For End User ##
               ################################
@@ -540,16 +550,16 @@ Resources:
             - echo '=== PREPARE REBOOT in 1 minute with at ==='
             - FILE=$(mktemp) && echo $FILE && echo '#!/bin/bash' > $FILE && echo 'reboot -f' >> $FILE && at now + 1 minute -f $FILE
             - echo "Bootstrap completed with return code $?"
-  
-  WorkshopBootstrapAssociation: 
+
+  WorkshopBootstrapAssociation:
     Type: AWS::SSM::Association
-    DependsOn: 
+    DependsOn:
       - WorkshopOutputBucket
       - WorkshopInstance
       - WorkshopBootstrapInstanceLambda
-    Properties: 
+    Properties:
       Name: !Ref WorkshopSSMDocument
-      OutputLocation: 
+      OutputLocation:
         S3Location:
           OutputS3BucketName: !Ref WorkshopOutputBucket
           OutputS3KeyPrefix: bootstrapoutput
@@ -586,15 +596,15 @@ Resources:
           - !Ref AWS::AccountId
           - ':assumed-role/'
           - !Ref WorkshopInstanceOwner
-      Tags: 
-        - 
+      Tags:
+        -
           Key: SSMBootstrap
           Value: Active
-        - 
+        -
           Key: Environment
           Value: AWS Workshop
 
-Outputs: 
+Outputs:
   Cloud9IDE:
     Value:
       Fn::Join:
