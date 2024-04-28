@@ -3,15 +3,6 @@
 ### Cloud Formation for Cloud 9 Env
 Create Cloud9 Environment using cloud formation template [cloud9-dynamic-template.yaml](../../hack/cfn/cloud9-dynamic-template.yaml)
 
-### Setup hostname
-
-Update hostname in files
-```sh
-cd idpbuilder/examples/ref-implementation
-./replace.sh ${C9_PID}.vfs.cloud9.${AWS_REGION}.amazonaws.com 443
-cd -
-```
-
 
 ### Run CNOE on Cloud9
 ```sh
@@ -58,10 +49,6 @@ Both users use the same password retrieved above.
 - Go to Create in the menu
 - Select the EKS Cluster creation
 - Give the name `my-cluster`
-- Create namespace `my-cluster` (This is a bug in argocd backstage that doesn't create namespace)
-    ```sh
-    kubectl create ns my-cluster
-    ```
 
 
 ## Remove EKS Clusters
