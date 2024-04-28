@@ -48,6 +48,13 @@ configuration, and their password can be retrieved with the following command:
 idpbuilder get secrets
 ```
 
+As described in the main readme file, the above command is equivalent to running:
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret
+kubectl get secrets -n gitea gitea-admin-secret
+kubectl get secrets -A -l cnoe.io/cli-secret=true
+```
+
 Use the username **`user1`** and the password value given by `USER_PASSWORD` field to login to the backstage instance.
 `user1` is an admin user who has access to everything in the cluster, while `user2` is a regular user with limited access.
 Both users use the same password retrieved above.
@@ -58,9 +65,19 @@ Both users use the same password retrieved above.
 - Go to Create in the menu
 - Select the EKS Cluster creation
 - Give the name `my-cluster`
-- Create namespace `my-cluster` with `kubectl create ns my-cluster` (This is a bug in argocd backstage that doesn't create namespace)
+- Create namespace `my-cluster` (This is a bug in argocd backstage that doesn't create namespace)
+    ```sh
+    kubectl create ns my-cluster
+    ```
 
 
 ## Remove EKS Clusters
 
 Delete the ArgoCD App with cascading, wait for EKS Cluster to be remove. You can do this from ArgoCD UI
+
+## Remove EKS Clusters
+
+Delete the ArgoCD App with cascading, wait for EKS Cluster to be remove. You can do this from ArgoCD UI also
+```sh
+kubectl delete app my-cluster -n argocd
+```

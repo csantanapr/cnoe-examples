@@ -43,7 +43,7 @@ idpbuilder create \
 
 # Using it
 
-For this example, we will walk through a few demonstrations. Once applications are ready, go to the https://cnoe.localtest.me:8443/
+For this example, we will walk through a few demonstrations. Once applications are ready
 
 Click on the Sign-In button, you will be asked to log into the Keycloak instance. There are two users set up in this
 configuration, and their password can be retrieved with the following command:
@@ -62,3 +62,25 @@ kubectl get secrets -A -l cnoe.io/cli-secret=true
 Use the username **`user1`** and the password value given by `USER_PASSWORD` field to login to the backstage instance.
 `user1` is an admin user who has access to everything in the cluster, while `user2` is a regular user with limited access.
 Both users use the same password retrieved above.
+
+## Demo
+- Login into Backstage with `user1`
+- Go to Create in the menu
+- Select the EKS Cluster creation
+- Give the name `my-cluster`
+- Create namespace `my-cluster` (This is a bug in argocd backstage that doesn't create namespace)
+    ```sh
+    kubectl create ns my-cluster
+    ```
+
+
+## Remove EKS Clusters
+
+Delete the ArgoCD App with cascading, wait for EKS Cluster to be remove. You can do this from ArgoCD UI
+
+## Remove EKS Clusters
+
+Delete the ArgoCD App with cascading, wait for EKS Cluster to be remove. You can do this from ArgoCD UI also
+```sh
+kubectl delete app my-cluster -n argocd
+```
