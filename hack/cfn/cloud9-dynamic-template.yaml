@@ -254,9 +254,10 @@ Resources:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/AdministratorAccess
       - arn:aws:iam::aws:policy/AWSCloud9SSMInstanceProfile
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Path: "/service-role/"
       #### REMOVE ROLENAME TO BE MORE GENERIC ####
-      RoleName: 'test-c9-template-Admin-Access'
+      RoleName: 'Cnoe-Workshop-C9-Admin-Access'
 
   WorkshopLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -452,6 +453,7 @@ Resources:
             - !Sub export ACCOUNT_ID=${AWS::AccountId}
             - !Sub export SIZE=${WorkshopInstanceVolumeSize}
             - !Sub export DEFAULT_GIT_BRANCH=${DefaultIdpBuilderBranch}
+            - !Sub export C9_PID=${WorkshopInstance}
             ### After changing disk size, it won't be reflected in OS until reboot ###
             - |
               /usr/bin/python3 -m pip install --user --upgrade boto3
@@ -514,11 +516,10 @@ Resources:
                 https://s3.${AWS_REGION}.amazonaws.com/amazon-eks/1.27.9/2024-01-04/bin/linux/amd64/kubectl
               sudo chmod +x /usr/local/bin/kubectl
 
-              # populate kubectl bash-completion
-              echo "source <(kubectl completion bash)" >> /home/ec2-user/.bash_completion
-              echo ". /etc/profile.d/bash_completion.sh" >> /home/ec2-user/.bashrc
-              echo ". ~/.bash_completion" >> /home/ec2-user/.bashrc
+              # k alias and auto-completion
+              echo "source <(kubectl completion bash)" >> /home/ec2-user/.bashrc
               echo "alias k=kubectl" >> /home/ec2-user/.bashrc
+              echo "complete -F __start_kubectl k" >> /home/ec2-user/.bashrc
 
               # Clone idpbuilder
               cd /home/ec2-user/environment/
@@ -527,16 +528,12 @@ Resources:
               tar -C /usr/local/bin -xvzf idpbuilder-linux-amd64.tar.gz idpbuilder
 
               # Run replace script for ref-implementation example
-              #cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
-              #sh replace.sh $C9_PID.vfs.cloud9.$AWS_REGION.amazonaws.com 443
+              cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
+              ./replace.sh ${C9_PID}.vfs.cloud9.${AWS_REGION}.amazonaws.com 443
 
-              # ACK Demo
               git clone https://github.com/csantanapr/cnoe-examples.git
               cp -r cnoe-examples/examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
               rm idpbuilder/examples/ref-implementation/spark-operator.yaml
-              rm idpbuilder/examples/ref-implementation/crossplane.yaml
-              rm idpbuilder/examples/ref-implementation/crossplane-providers.yaml
-              rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
               rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
 
               ################################

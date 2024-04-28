@@ -10,17 +10,10 @@ Clone this repository
 git clone https://github.com/cnoe-io/idpbuilder
 ```
 
-Copy extra Backstage templates for ACK
+Copy extra Backstage templates for ACK, rm others
 ```sh
 cp -r examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
-```
-
-(Optional) Delete not required packages
-```sh
 rm idpbuilder/examples/ref-implementation/spark-operator.yaml
-rm idpbuilder/examples/ref-implementation/crossplane.yaml
-rm idpbuilder/examples/ref-implementation/crossplane-providers.yaml
-rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
 rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
 ```
 

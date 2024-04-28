@@ -8,7 +8,7 @@ Create Cloud9 Environment using cloud formation template [cloud9-dynamic-templat
 Update hostname in files
 ```sh
 cd idpbuilder/examples/ref-implementation
-./replace.sh $C9_PID.vfs.cloud9.$AWS_REGION.amazonaws.com 443
+./replace.sh ${C9_PID}.vfs.cloud9.${AWS_REGION}.amazonaws.com 443
 cd -
 ```
 
@@ -46,13 +46,6 @@ configuration, and their password can be retrieved with the following command:
 
 ```bash
 idpbuilder get secrets
-```
-
-As described in the main readme file, the above command is equivalent to running:
-```bash
-kubectl -n argocd get secret argocd-initial-admin-secret
-kubectl get secrets -n gitea gitea-admin-secret
-kubectl get secrets -A -l cnoe.io/cli-secret=true
 ```
 
 Use the username **`user1`** and the password value given by `USER_PASSWORD` field to login to the backstage instance.
