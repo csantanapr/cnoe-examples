@@ -527,14 +527,14 @@ Resources:
               wget https://github.com/cnoe-io/idpbuilder/releases/latest/download/idpbuilder-linux-amd64.tar.gz
               tar -C /usr/local/bin -xvzf idpbuilder-linux-amd64.tar.gz idpbuilder
 
-              # Run replace script for ref-implementation example
-              cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
-              ./replace.sh ${C9_PID}.vfs.cloud9.${AWS_REGION}.amazonaws.com 443
-
               git clone https://github.com/csantanapr/cnoe-examples.git
               cp -r cnoe-examples/examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
               rm idpbuilder/examples/ref-implementation/spark-operator.yaml
               rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
+
+              # Run replace script for ref-implementation example
+              cd /home/ec2-user/environment/idpbuilder/examples/ref-implementation
+              ./replace.sh ${C9_PID}.vfs.cloud9.${AWS_REGION}.amazonaws.com 443
 
               ################################
               ##  End of Script For End User ##
