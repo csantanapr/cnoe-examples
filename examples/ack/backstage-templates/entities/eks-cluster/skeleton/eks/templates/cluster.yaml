@@ -1,0 +1,199 @@
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: VPC
+metadata:
+  name: {{ include "eks.fullname" . }}-vpc
+spec:
+  cidrBlocks:
+  - 192.168.0.0/16
+  enableDNSSupport: true
+  enableDNSHostnames: true
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: ElasticIPAddress
+metadata:
+  name: {{ include "eks.fullname" . }}-eip
+spec: {}
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: InternetGateway
+metadata:
+  name: {{ include "eks.fullname" . }}-igw
+spec:
+  vpcRef:
+    from:
+      name: {{ include "eks.fullname" . }}-vpc
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: RouteTable
+metadata:
+  name: {{ include "eks.fullname" . }}-public-route-table
+spec:
+  vpcRef:
+    from:
+      name: {{ include "eks.fullname" . }}-vpc
+  routes:
+    - destinationCIDRBlock: 0.0.0.0/0
+      gatewayRef:
+        from:
+          name: {{ include "eks.fullname" . }}-igw
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: Subnet
+metadata:
+  name: {{ include "eks.fullname" . }}-public-subnet1
+spec:
+  availabilityZone: us-west-2a
+  cidrBlock: 192.168.0.0/18
+  vpcRef:
+    from:
+      name: {{ include "eks.fullname" . }}-vpc
+  routeTableRefs:
+  - from:
+      name: {{ include "eks.fullname" . }}-public-route-table
+  mapPublicIPOnLaunch: true
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: Subnet
+metadata:
+  name: {{ include "eks.fullname" . }}-public-subnet2
+spec:
+  availabilityZone: us-west-2b
+  cidrBlock: 192.168.64.0/18
+  vpcRef:
+    from:
+      name: {{ include "eks.fullname" . }}-vpc
+  routeTableRefs:
+  - from:
+      name: {{ include "eks.fullname" . }}-public-route-table
+  mapPublicIPOnLaunch: true
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: NATGateway
+metadata:
+  name: {{ include "eks.fullname" . }}-natgateway1
+spec:
+  subnetRef:
+    from:
+      name: {{ include "eks.fullname" . }}-public-subnet2
+  allocationRef:
+    from:
+      name: {{ include "eks.fullname" . }}-eip
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: {{ include "eks.fullname" . }}-cluster-role
+spec:
+  name: {{ include "eks.fullname" . }}-cluster-role
+  description: "Example cluster cluster role"
+  policies:
+    - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+  assumeRolePolicyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "eks.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    }
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: {{ include "eks.fullname" . }}-node-role
+spec:
+  name: {{ include "eks.fullname" . }}-node-role
+  description: "Example cluster node role"
+  policies:
+    - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+  assumeRolePolicyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "ec2.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    }
+---
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: {{ include "eks.fullname" . }}-ack-admin-pia-role
+spec:
+  name: {{ include "eks.fullname" . }}-ack-admin-pia-role
+  description: "Example cluster admin pia role"
+  policies:
+    - arn:aws:iam::aws:policy/AdministratorAccess
+  assumeRolePolicyDocument: |
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "AllowEksAuthToAssumeRoleForPodIdentity",
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "pods.eks.amazonaws.com"
+                },
+                "Action": [
+                    "sts:AssumeRole",
+                    "sts:TagSession"
+                ]
+            }
+        ]
+    }
+---
+apiVersion: eks.services.k8s.aws/v1alpha1
+kind: Cluster
+metadata:
+  name: {{ include "eks.fullname" . }}
+spec:
+  name: {{ include "eks.fullname" . }}
+  roleRef:
+    from:
+      name: {{ include "eks.fullname" . }}-cluster-role
+  version: "1.29"
+  resourcesVPCConfig:
+    endpointPrivateAccess: false
+    endpointPublicAccess: true
+    subnetRefs:
+    - from:
+        name: {{ include "eks.fullname" . }}-public-subnet1
+    - from:
+        name: {{ include "eks.fullname" . }}-public-subnet2
+---
+apiVersion: eks.services.k8s.aws/v1alpha1
+kind: Nodegroup
+metadata:
+  name: {{ include "eks.fullname" . }}-nodegroup
+spec:
+  name: {{ include "eks.fullname" . }}-ng
+  diskSize: 100
+  clusterRef:
+    from:
+      name: {{ include "eks.fullname" . }}
+  subnetRefs:
+  - from:
+      name: {{ include "eks.fullname" . }}-public-subnet1
+  - from:
+      name: {{ include "eks.fullname" . }}-public-subnet2
+  nodeRoleRef:
+    from:
+      name: {{ include "eks.fullname" . }}-node-role
+  updateConfig:
+    maxUnavailable: 1
+  scalingConfig:
+    minSize: 1
+    maxSize: 1
+    desiredSize: 1

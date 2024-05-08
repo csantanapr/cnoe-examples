@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  description: "Create EKS Cluster"
+  description: "Create EKS ClusterSet"
   name: eks-cluster
-  title: "Create EKS Cluster"
+  title: "Create EKS ClusterSet"
 spec:
   owner: guest
   type: service
@@ -14,7 +14,7 @@ spec:
       properties:
         name:
           type: string
-          description: name of this cluster
+          description: name of this clusterset
 
   steps:
     - id: template
@@ -24,6 +24,7 @@ spec:
         url: ./skeleton
         values:
           name: ${{parameters.name}}
+          repoUrl: http://my-gitea-http.gitea.svc.cluster.local:3000/giteaAdmin/${{parameters.name}}
 
     - id: publish
       name: Publishing to a gitea git repository
@@ -37,7 +38,7 @@ spec:
       name: Create ArgoCD App
       action: cnoe:create-argocd-app
       input:
-        appName: ${{parameters.name}}
+        appName: clusterset-${{parameters.name}}
         appNamespace: default
         argoInstance: in-cluster
         projectName: default
