@@ -7,9 +7,9 @@ metadata:
   annotations:
     backstage.io/kubernetes-label-selector: 'entity-id=${{values.name}}'
     backstage.io/kubernetes-namespace: default
-    argocd/app-name: ${{values.name | dump}}
+    argocd/app-selector: "backstage-name=clusterset-${{values.name}}"
   links:
-    - url: https://cnoe.localtest.me:8443/gitea
+    - url: https://cnoe.localtest.me:8443/gitea/giteaAdmin/${{values.name}}
       title: Repo URL
       icon: github
 spec:

@@ -1,10 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${{values.name}}-cluster-1
+  name: ${{values.name}}-cluster-qa
   namespace: argocd
   labels:
-    env: dev
+    env: qa
+    backstage-name: clusterset-${{values.name}}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -13,7 +14,7 @@ spec:
     repoURL: ${{values.repoUrl}}
     path: eks
     helm:
-      releaseName: ${{values.name}}-cluster-1
+      releaseName: ${{values.name}}-cluster-qa
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default

@@ -15,6 +15,9 @@ Copy extra Backstage templates for ACK, rm others
 cp -r examples/ack/backstage-templates/* idpbuilder/examples/ref-implementation/backstage-templates/
 rm idpbuilder/examples/ref-implementation/spark-operator.yaml
 rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
+rm idpbuilder/examples/ref-implementation/crossplane.yaml
+rm idpbuilder/examples/ref-implementation/crossplane-providers.yaml
+rm idpbuilder/examples/ref-implementation/crossplane-compositions.yaml
 ```
 
 
@@ -23,7 +26,7 @@ rm idpbuilder/examples/ref-implementation/argo-workflows.yaml
 idpbuilder create \
   --use-path-routing \
   --package-dir idpbuilder/examples/ref-implementation \
-  --package-dir cnoe-examples/examples/ack/aws-controllers-k8s
+  --package-dir examples/ack/aws-controllers-k8s
 ```
 
 #### Accessing UIs

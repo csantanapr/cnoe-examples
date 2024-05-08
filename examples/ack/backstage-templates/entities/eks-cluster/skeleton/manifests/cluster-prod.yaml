@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${{values.name}}-cluster-prod
+  namespace: argocd
+  labels:
+    env: prod
+    backstage-name: clusterset-${{values.name}}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: ${{values.repoUrl}}
+    path: eks
+    helm:
+      releaseName: ${{values.name}}-cluster-prod
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
