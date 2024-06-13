@@ -3,6 +3,11 @@ bin/*
 cover.out
 __debug*
 
+node_modules
+package-lock.json
+*.swp
+
+local/
 private
 .DS_Store
 .idea

@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  template:
+    spec:
+      containers:
+      - name: myapp
+        image: 015299085168.dkr.ecr.us-west-2.amazonaws.com/hello-world:1.0.0
