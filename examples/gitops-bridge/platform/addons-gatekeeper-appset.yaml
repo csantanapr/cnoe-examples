@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: gatekeeper
+  namespace: argocd
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchExpressions:
+                  - key: enable_gatekeeper
+                    operator: In
+                    values: ['true']
+          - git:
+              repoURL: "cnoe://addons"
+              files:
+                - path: "**/stack{{.metadata.annotations.platform_stack_version}}.yaml"
+  template:
+    metadata:
+      name: addon-{{.name}}-{{.addons.gatekeeper.chart}}
+    spec:
+      project: default
+      sources:
+        - repoURL: "cnoe://addons"
+          ref: values
+        - chart: '{{.addons.gatekeeper.chart}}'
+          repoURL: '{{.addons.gatekeeper.repoUrl}}'
+          targetRevision: '{{.addons.gatekeeper.targetRevision}}'
+          helm:
+            releaseName: '{{.addons.gatekeeper.releaseName}}'
+            ignoreMissingValueFiles: true
+            valueFiles:
+              - $values/values/common/{{.addons.gatekeeper.chart}}/values.yaml
+              - $values/values/{{.metadata.labels.environment}}/{{.addons.gatekeeper.chart}}/values.yaml
+              - $values/values/clusters/{{.name}}/{{.addons.gatekeeper.chart}}/values.yaml
+      destination:
+        namespace: '{{.addons.gatekeeper.namespace}}'
+        name: '{{.name}}'
+      syncPolicy:
+        automated:
+          prune: false
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true  # Big CRDs.
+
+
