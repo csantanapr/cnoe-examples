@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: clusters
+    namespace: argocd
     name: "in-cluster"
   source:
     repoURL: cnoe://manifests

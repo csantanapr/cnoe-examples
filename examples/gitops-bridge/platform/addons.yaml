@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: addons
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    name: "in-cluster"
+  source:
+    repoURL: cnoe://addons
+    path: "charts/gitops-bridge"
+    helm:
+      valuesObject:
+        repoURLGit: https://gitea.cnoe.localtest.me:8443/giteaAdmin/idpbuilder-localdev-addons-addons.git
+        repoURLValues: https://gitea.cnoe.localtest.me:8443/giteaAdmin/idpbuilder-localdev-addons-addons.git
+        applicationsets:
+          argocd:
+            enabled: false
+          aws_load_balancer_controller:
+            enabled: false
+          gatekeeper:
+            enabled: true
+  project: default
+  syncPolicy:
+    automated:
+      selfHeal: true

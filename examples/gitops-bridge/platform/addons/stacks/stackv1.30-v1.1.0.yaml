@@ -6,7 +6,7 @@ addons:
     repoUrl: https://argoproj.github.io/argo-helm
     targetRevision: "6.6.0"
     namespace: argocd
-  aws-load-balancer-controller:
+  aws_load_balancer_controller:
     chart: aws-load-balancer-controller
     releaseName: aws-load-balancer-controller
     repoUrl: https://aws.github.io/eks-charts
