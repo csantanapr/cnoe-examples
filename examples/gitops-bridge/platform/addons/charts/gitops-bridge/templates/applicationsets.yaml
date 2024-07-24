@@ -1,10 +1,13 @@
 {{- $namespace := .Values.namespace }}
 {{- $useSelector := .Values.useSelector -}}
 {{- $repoURLGit := .Values.repoURLGit -}}
-{{- $repoURLGitrevision := .Values.repoURLGitrevision -}}
+{{- $repoURLGitRevision := .Values.repoURLGitRevision -}}
+{{- $repoURLGitBasePath := .Values.repoURLGitBasePath -}}
 {{- $repoURLValues := .Values.repoURLValues -}}
-{{- $repoURLValuesrevision := .Values.repoURLValuesrevision -}}
+{{- $repoURLValuesRevision := .Values.repoURLValuesRevision -}}
+{{- $repoURLValuesBasePath := .Values.repoURLValuesBasePath -}}
 {{- $project := .Values.project -}}
+{{- $syncPolicy := .Values.syncPolicy -}}
 {{- range $name, $addon := .Values.applicationsets }}
 {{- $nameNormalize := printf "%s" $name | replace "_" "-" | trunc 63 | trimSuffix "-"  -}}
 {{- if $addon.enabled }}
@@ -22,7 +25,6 @@ spec:
   goTemplateOptions:
     - missingkey=error
   generators:
-
     - matrix:
         generators:
           - clusters:
@@ -34,17 +36,19 @@ spec:
                 {{- end }}
           - git:
               repoURL: {{ $repoURLGit }}
-              revision: {{ $repoURLGitrevision }}
+              revision: {{ $repoURLGitRevision }}
               files:
-                - path: "**/stack{{`{{.metadata.annotations.platform_stack_version}}`}}.yaml"
+              - path: '**/stack{{`{{(.metadata.annotations.platform_stack_version | default "")}}`}}.yaml'
   template:
     metadata:
-      name: addon-{{ $nameNormalize }}
+      name: addon-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.name}}`}}{{ end }}
+    annotations:
+      argocd.argoproj.io/manifest-generate-paths: {{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/common/values.yaml;{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/{{`{{.metadata.labels.environment}}`}}/values.yaml;{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/clusters/{{`{{.name}}`}}/values.yaml
     spec:
       project: {{ $project }}
       sources:
       - repoURL: {{ $repoURLValues }}
-        targetRevision: {{ $repoURLValuesrevision }}
+        targetRevision: {{ $repoURLValuesRevision }}
         ref: values
       - chart: '{{`{{.addons.`}}{{ $name }}{{`.chart}}`}}'
         repoURL: '{{`{{.addons.`}}{{ $name }}{{`.repoUrl}}`}}'
@@ -53,28 +57,46 @@ spec:
           releaseName: '{{`{{.addons.`}}{{ $name }}{{`.releaseName}}`}}'
           ignoreMissingValueFiles: true
           valueFiles:
-              - $values/values/common/{{`{{.addons.`}}{{ $name }}{{`.chart}}`}}/values.yaml
-              - $values/values/{{`{{.metadata.labels.environment}}`}}/{{`{{.addons.`}}{{ $name }}{{`.chart}}`}}/values.yaml
-              - $values/values/clusters/{{`{{.name}}`}}/{{`{{.addons.`}}{{ $name }}{{`.chart}}`}}/values.yaml
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/common/values.yaml
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/{{`{{.metadata.labels.environment}}`}}/values.yaml
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/clusters/{{`{{.name}}`}}/values.yaml
           {{- with $addon.values }}
           valuesObject:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+      {{- if $addon.resources }}
+      - repoURL: {{ $repoURLValues }}
+        targetRevision: {{ $repoURLValuesRevision }}
+        path: '{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/{{ $addon.resources.path }}resources'
+        {{- if $addon.resources.helm }}
+        helm:
+          releaseName: '{{`{{.addons.`}}{{ $name }}{{`.releaseName}}`}}'
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/common/resources/values.yaml
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/{{`{{.metadata.labels.environment}}`}}/resources/values.yaml
+            - $values/{{ $repoURLValuesBasePath }}values/{{ $nameNormalize }}/clusters/{{`{{.name}}`}}/resources/values.yaml
+          {{- if $addon.resources.helm.valuesObject }}
+          valuesObject:
+            {{- toYaml $addon.resources.helm.valuesObject | nindent 12 }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
       destination:
-        namespace: '{{`{{.addons.`}}{{ $name }}{{`.namespace}}`}}'
+        namespace: '{{`{{`}}{{ $addon.namespace }}{{`}}`}}'
         name: '{{`{{.name}}`}}'
+      {{- if $addon.syncPolicy }}
       syncPolicy:
-        automated:
-          prune: false
-        retry:
-          limit: 100
-        syncOptions:
-          - CreateNamespace=true
-          - ServerSideApply=true  # Big CRDs.
+        {{- toYaml $addon.syncPolicy | nindent 8 }}
+      {{ else }}
+      syncPolicy:
+        {{- toYaml $syncPolicy | nindent 8 }}
+      {{- end }}
       {{- with $addon.ignoreDifferences }}
       ignoreDifferences:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
 {{- end }}
 {{- end }}
 {{- end }}

@@ -7,13 +7,19 @@ metadata:
     argocd.argoproj.io/secret-type: cluster
     enable_gatekeeper: "true"
     enable_aws_load_balancer_controller: "true"
+    enable_aws_load_balancer_controller: "true"
     environment: dev
   annotations:
-    platform_stack_version: "v1.30-v1.1.0"
+    platform_stack_version: ""
     aws_vpc_id: vpc123
     aws_cluster_name: in-cluster
     aws_load_balancer_controller_service_account: sa123
     aws_load_balancer_controller_iam_role_arn: arn:aws:iam::123456789012:role/role123
+    karpenter_sqs_queue_name: karpenter-interruption-queue
+    karpenter_namespace: karpenter
+    karpenter_service_account: karpenter
+    karpenter_iam_role_arn: arn:aws:iam::123456789012:role/karpenter
+    karpenter_iam_role_name: karpenter
 type: Opaque
 stringData:
   name: in-cluster

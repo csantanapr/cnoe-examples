@@ -1,10 +1,23 @@
+stack: '**/stack{{`{{(.metadata.annotations.platform_stack_version | default "")}}`}}.yaml'
 repoURLGit: "'{{.metadata.annotations.addons_repo_url}}'"
-repoURLGitrevision: HEAD
+repoURLGitRevision: HEAD
+repoURLGitBasePath: "**"
 repoURLValues: "'{{.metadata.annotations.addons_repo_url}}'"
-repoURLValuesrevision: HEAD
+repoURLValuesRevision: HEAD
+repoURLValuesBasePath: ""
 project: default
 namespace: argocd
 useSelector: false
+syncPolicy:
+  automated:
+    selfHeal: true
+    allowEmpty: true
+    prune: false
+  retry:
+    limit: 100
+  syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true  # Big CRDs.
 applicationsets:
   argocd:
     enabled: true
@@ -13,6 +26,7 @@ applicationsets:
         - key: enable_argocd
           operator: In
           values: ['true']
+    namespace: '.addons.argocd.namespace'
   aws_load_balancer_controller:
     enabled: true
     selector:
@@ -27,6 +41,7 @@ applicationsets:
         name: '{{.metadata.annotations.aws_load_balancer_controller_service_account}}'
         annotations:
           eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_load_balancer_controller_iam_role_arn}}'
+    namespace: '.metadata.annotations.aws_load_balancer_controller_namespace'
     ignoreDifferences:
         - kind: Secret
           name: aws-load-balancer-tls
@@ -44,5 +59,44 @@ applicationsets:
         - key: enable_gatekeeper
           operator: In
           values: ['true']
+    namespace: '.addons.gatekeeper.namespace'
+  metrics_server:
+    enabled: true
+    selector:
+      matchExpressions:
+        - key: enable_metrics_server
+          operator: In
+          values: ['true']
+    namespace: '.addons.metrics_server.namespace'
+  aws_ebs_csi_resources:
+    enabled: true
+    selector:
+      matchExpressions:
+        - key: enable_aws_ebs_csi_resources
+          operator: In
+          values: ['true']
+    namespace: '.addons.argocd.namespace'
+    kustomize: {}
+  karpenter:
+    enabled: true
+    selector:
+      matchExpressions:
+        - key: enable_karpenter
+          operator: In
+          values: ['true']
+    namespace: '.metadata.annotations.karpenter_namespace'
+    values:
+      settings:
+        clusterName: '{{.metadata.annotations.aws_cluster_name}}'
+        interruptionQueue: '{{.metadata.annotations.karpenter_sqs_queue_name}}'
+      serviceAccount:
+        name: '{{.metadata.annotations.karpenter_service_account}}'
+        annotations:
+          eks.amazonaws.com/role-arn: '{{.metadata.annotations.karpenter_iam_role_arn}}'
+    resources:
+      helm:
+        valuesObject:
+            clusterName: '{{.metadata.annotations.aws_cluster_name}}'
+            nodeRole: '{{.metadata.annotations.karpenter_iam_role_name}}'
 
 
