@@ -8,6 +8,7 @@
 {{- $repoURLValuesBasePath := .Values.repoURLValuesBasePath -}}
 {{- $project := .Values.project -}}
 {{- $syncPolicy := .Values.syncPolicy -}}
+{{- $stackPath := .Values.stackPath -}}
 {{- range $name, $addon := .Values.applicationsets }}
 {{- $nameNormalize := printf "%s" $name | replace "_" "-" | trunc 63 | trimSuffix "-"  -}}
 {{- if $addon.enabled }}
@@ -38,7 +39,7 @@ spec:
               repoURL: {{ $repoURLGit }}
               revision: {{ $repoURLGitRevision }}
               files:
-              - path: '**/stack{{`{{(.metadata.annotations.platform_stack_version | default "")}}`}}.yaml'
+              - path: '{{ $stackPath}}'
   template:
     metadata:
       name: addon-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.name}}`}}{{ end }}

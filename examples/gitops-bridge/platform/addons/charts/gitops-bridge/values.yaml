@@ -1,4 +1,4 @@
-stack: '**/stack{{`{{(.metadata.annotations.platform_stack_version | default "")}}`}}.yaml'
+stackPath: '**/stack{{(.metadata.annotations.platform_stack_version | default "")}}.yaml'
 repoURLGit: "'{{.metadata.annotations.addons_repo_url}}'"
 repoURLGitRevision: HEAD
 repoURLGitBasePath: "**"
@@ -97,6 +97,6 @@ applicationsets:
       helm:
         valuesObject:
             clusterName: '{{.metadata.annotations.aws_cluster_name}}'
-            nodeRole: '{{.metadata.annotations.karpenter_iam_role_name}}'
+            nodeRole: '{{.metadata.annotations.karpenter_node_iam_role_name}}'
 
 
