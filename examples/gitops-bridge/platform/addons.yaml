@@ -22,21 +22,3 @@ spec:
         applicationsets:
           argocd:
             enabled: false
-          aws_load_balancer_controller:
-            enabled: false
-          metrics_server:
-            enabled: false
-          aws_ebs_csi_resources:
-            enabled: false
-          karpenter:
-            enabled: true
-          gatekeeper:
-            enabled: true
-            kustomize:
-              patches:
-                - target:
-                    kind: ConfigMap
-                  patch: |-
-                    - op: replace
-                      path: /data/foo
-                      value: '{{.metadata.annotations.aws_vpc_id}}'
