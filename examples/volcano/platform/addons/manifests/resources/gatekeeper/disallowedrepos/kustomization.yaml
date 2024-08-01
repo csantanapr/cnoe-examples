@@ -1,3 +1,0 @@
-resources:
-  - template.yaml
-  - samples/repo-must-not-be-k8s-gcr-io/constraint.yaml

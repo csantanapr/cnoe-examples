@@ -19,6 +19,14 @@ spec:
         repoURLGit: cnoe://addons
         repoURLValues: cnoe://addons
         useSelector: false
-        applicationsets:
-          argocd:
-            enabled: false
+        useStack: false
+        addons:
+          gatekeeper:
+            enabled: true
+          metrics_server:
+            enabled: true
+            values:
+              args:
+                - "--kubelet-insecure-tls" # this is only required in kind cluster https://gist.github.com/sanketsudake/a089e691286bf2189bfedf295222bd43
+          volcano:
+            enabled: true

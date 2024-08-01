@@ -21,12 +21,12 @@
 {{- $templatePatch := .Values.templatePatch -}}
 {{- $applyNestedSelectors := .Values.applyNestedSelectors -}}
 {{- $hasapplyNestedSelectors := hasKey .Values "applyNestedSelectors" -}}
+
 {{- range $name, $addon := .Values.addons }}
+{{- if or $useSelector $addon.enabled }}
+{{- with $addon -}}
 {{- $nameNormalize := printf "%s" $name | replace "_" "-" | trunc 63 | trimSuffix "-"  -}}
 {{- $addonhasapplyNestedSelectors := hasKey $addon "applyNestedSelectors" -}}
-{{- if $addon.enabled }}
-{{- with $addon -}}
----
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:

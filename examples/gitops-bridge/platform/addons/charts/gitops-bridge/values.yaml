@@ -39,7 +39,7 @@ useValuesFilePrefix: false
 valuesFilePrefix: tenants/{{.metadata.labels.tenant}}/
 addons:
   argocd:
-    enabled: true
+    enabled: false
     releaseName: argocd
     namespace: argocd
     chart: argo-cd
@@ -51,7 +51,7 @@ addons:
           operator: In
           values: ['true']
   aws_load_balancer_controller:
-    enabled: true
+    enabled: false
     releaseName: aws-load-balancer-controller
     aws_load_balancer_controller:
     chart: aws-load-balancer-controller
@@ -83,7 +83,7 @@ addons:
           kind: ValidatingWebhookConfiguration
           jqPathExpressions: ['.webhooks[].clientConfig.caBundle']
   gatekeeper:
-    enabled: true
+    enabled: false
     releaseName: gatekeeper
     namespace: gatekeeper-system
     chart: gatekeeper
@@ -102,7 +102,7 @@ addons:
         valuesObject:
           environment: '{{.metadata.labels.environment}}'
   metrics_server:
-    enabled: true
+    enabled: false
     releaseName: metrics-server
     namespace: kube-system
     metrics_server:
@@ -115,7 +115,7 @@ addons:
           operator: In
           values: ['true']
   aws_ebs_csi_resources:
-    enabled: true
+    enabled: false
     releaseName: aws-ebs-csi-classes
     chart: aws-ebs-csi-classes
     repoUrl: https://gitops-bridge-dev.github.io/gitops-bridge-helm-charts
@@ -127,7 +127,7 @@ addons:
           operator: In
           values: ['true']
   karpenter:
-    enabled: true
+    enabled: false
     releaseName: karpenter
     namespace: '.metadata.annotations.karpenter_namespace'
     chart: karpenter/karpenter
@@ -153,5 +153,13 @@ addons:
           environment: '{{.metadata.labels.environment}}'
           clusterName: '{{.metadata.annotations.aws_cluster_name}}'
           nodeRole: '{{.metadata.annotations.karpenter_node_iam_role_name}}'
-
+  volcano:
+    enabled: false
+    releaseName: volcano
+    namespace: volcano-system
+    chart: volcano
+    repoUrl: https://volcano-sh.github.io/helm-charts
+    targetRevision: "1.9.0"
+    annotationsApp:
+      argocd.argoproj.io/compare-options: "ServerSideDiff=true" # required for volcano https://github.com/argoproj/argo-cd/issues/18548
 
