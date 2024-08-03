@@ -1,4 +1,5 @@
-file: stack-k8sv1.30-addons.yaml
+file: stack-k8sv1.30-addonsv1.5.yaml
+kubernetes_version: "1.30"
 addons:
   argocd:
     chart: argo-cd

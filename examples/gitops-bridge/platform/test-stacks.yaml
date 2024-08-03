@@ -22,16 +22,29 @@ spec:
           repoURL: cnoe://addons
           revision: HEAD
           files:
-          - path: stacks/stack-k8sv1.30-addons{{ with index .tenants "tenant1" }}{{ with index .clusters "cluster1" }}{{ .stack_version }}{{ else }}{{ with index .environments "dev" }}{{ .stack_version }}{{ else }}{{ .stack_version }}{{ end }}{{ end }}{{ end }}.yaml
-
+          - path: stacks/stack-k8sv1.30-addons{{ with index (default dict .tenants) "tenant1" }}{{ with index (default dict .clusters) "cluster1" }}{{ .addons_version }}{{ else }}{{ with index (default dict .environments) "dev" }}{{ .addons_version }}{{ else }}{{ .addons_version }}{{ end }}{{ end }}{{ else }}{{ .addons_version }}{{ end }}.yaml
+# This is the same as the above, but easier to read
+# {{ with index (default dict .tenants) "tenant1" }}
+#   {{ with index (default dict .clusters) "cluster1" }}
+#     {{ .addons_version }}
+#   {{ else }}
+#     {{ with index (default dict .environments) "dev" }}
+#       {{ .addons_version }}
+#       {{ else }}
+#         {{ .addons_version }}
+#     {{ end }}
+#   {{ end }}
+# {{ else }}
+#     {{ .addons_version }}
+# {{ end }}
   template:
     metadata:
-      name: '{{.path.filenameNormalized}}-guestbook' # 'name' field of the Secret
+      name: 'guestbook' # 'name' field of the Secret
     spec:
       project: "default"
       source:
         repoURL: cnoe://addons
-        path: "test"
+        path: "test/helm-guestbook"
         helm:
           values: |
             {{ . | mustToPrettyJson }}

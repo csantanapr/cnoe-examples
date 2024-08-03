@@ -1,4 +1,4 @@
-file: stack-k8sv1.30-addonsv1.0.yaml
+file: stack-k8sv1.30-addons-default.yaml
 kubernetes_version: "1.30"
 addons:
   argocd:
