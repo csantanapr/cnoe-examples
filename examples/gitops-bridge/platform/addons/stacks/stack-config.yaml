@@ -1,0 +1,13 @@
+tenants:
+  tenant1:
+    stack_version: v1.3
+    environments:
+      devx:
+        stack_version: v1.2
+      staging:
+        stack_version: v1.0
+      prod:
+        stack_version: v1.0
+    clusters:
+      clusterx:
+        stack_version: v1.0

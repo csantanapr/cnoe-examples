@@ -1,4 +1,4 @@
-version: v1.30-v1.0.0
+file: stack-k8sv1.30-addonsv1.0.yaml
 addons:
   argocd:
     chart: argo-cd

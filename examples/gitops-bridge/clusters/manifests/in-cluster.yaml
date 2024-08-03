@@ -7,6 +7,8 @@ metadata:
     argocd.argoproj.io/secret-type: cluster
     environment: dev
   annotations:
+    #argocd.argoproj.io/kubernetes-version: "1.30"
+    kubernetes_version: "1.30"
     platform_stack_version: ""
     aws_vpc_id: vpc123
     aws_cluster_name: in-cluster
