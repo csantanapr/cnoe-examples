@@ -19,7 +19,7 @@ spec:
         repoURLGit: cnoe://addons
         repoURLValues: cnoe://addons
         useSelector: false
-        useStack: false
+        useStack: true
         addons:
           gatekeeper:
             enabled: true
