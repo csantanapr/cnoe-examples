@@ -8,9 +8,10 @@ metadata:
     environment: dev
     tenant: tenant1
     enable_metrics_server: "true"
+    kubernetes_version: "1.30"
   annotations:
     #argocd.argoproj.io/kubernetes-version: "1.30"
-    kubernetes_version: "1.30"
+
     aws_vpc_id: vpc123
     aws_cluster_name: in-cluster
     # workaround for stack assignment argo can extract .name in matrix
