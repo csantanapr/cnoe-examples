@@ -12,6 +12,8 @@ metadata:
     kubernetes_version: "1.30"
     aws_vpc_id: vpc123
     aws_cluster_name: in-cluster
+    # workaround for stack assignment argo can extract .name in matrix
+    cluster_name: in-cluster
     aws_load_balancer_controller_service_account: sa123
     aws_load_balancer_controller_iam_role_arn: arn:aws:iam::123456789012:role/role123
     karpenter_sqs_queue_name: karpenter-interruption-queue
