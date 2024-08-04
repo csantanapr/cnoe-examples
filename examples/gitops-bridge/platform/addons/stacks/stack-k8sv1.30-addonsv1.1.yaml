@@ -25,4 +25,7 @@ addons:
     chart: karpenter/karpenter
     repoUrl: public.ecr.aws
     targetRevision: "0.37.0"
-
+  volcano:
+    chart: volcano
+    repoUrl: https://volcano-sh.github.io/helm-charts
+    targetRevision: "1.9.0"
