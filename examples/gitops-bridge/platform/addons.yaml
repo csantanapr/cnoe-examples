@@ -11,6 +11,7 @@ spec:
   syncPolicy:
     automated:
       selfHeal: true
+      prune: true
   source:
     repoURL: cnoe://addons
     path: "charts/gitops-bridge"
@@ -18,7 +19,7 @@ spec:
       valuesObject:
         repoURLGit: cnoe://addons
         repoURLValues: cnoe://addons
-        useSelector: true
+        useSelector: false
         useStack: true
         addons:
           gatekeeper:
