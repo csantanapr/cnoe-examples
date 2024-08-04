@@ -1,3 +1,4 @@
+{{- $kubeVersion := .Values.kubernetes_version }}
 {{- $namespace := .Values.namespace }}
 {{- $useSelector := .Values.useSelector -}}
 {{- $useStack := .Values.useStack -}}
@@ -12,6 +13,9 @@
 {{- $project := .Values.project -}}
 {{- $syncPolicy := .Values.syncPolicy -}}
 {{- $stackPath := .Values.stackPath -}}
+{{- $stackPathPrefix := .Values.stackPathPrefix -}}
+{{- $stackPathConfig := .Values.stackPathConfig -}}
+{{- $stackPathConfigPrefix := .Values.stackPathConfigPrefix -}}
 {{- $valueFiles := .Values.valueFiles -}}
 {{- $valuesFilePrefix := .Values.valuesFilePrefix -}}
 {{- $useValuesFilePrefix := .Values.useValuesFilePrefix -}}
@@ -82,23 +86,28 @@ spec:
   {{- end }}
   generators:
     {{- if $useStack }}
-    - matrix:
-        generators:
-    {{- end }}
-          - clusters:
-              selector:
-                matchLabels:
-                  argocd.argoproj.io/secret-type: cluster
-                {{- if and $addon.selector $useSelector }}
-                  {{- toYaml $addon.selector | nindent 16 }}
-                {{- end }}
-          {{- if $useStack }}
+  - matrix:
+      generators:
+      - matrix:
+          generators:
           - git:
               repoURL: {{ $repoURLGit }}
               revision: {{ $repoURLGitRevision }}
               files:
-              - path: '{{ $stackPath }}'
-          {{- end }}
+              - path: {{ $stackPathConfigPrefix }}{{ $kubeVersion}}{{ $stackPathConfig }}
+          - git:
+              repoURL: {{ $repoURLGit }}
+              revision: {{ $repoURLGitRevision }}
+              files:
+              - path: {{ $stackPathPrefix }}{{ $kubeVersion}}{{ $stackPath }}
+    {{- end }}
+      - clusters:
+          selector:
+            matchLabels:
+              argocd.argoproj.io/secret-type: cluster
+            {{- if and $addon.selector $useSelector }}
+              {{- toYaml $addon.selector | nindent 14 }}
+            {{- end }}
   template:
     metadata:
       name: addon-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.nameNormalized}}`}}{{ end }}
