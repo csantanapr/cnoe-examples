@@ -56,20 +56,7 @@ spec:
           {{- end -}}.yaml'
             test_json:  |
               {{ . | mustToPrettyJson }}
-# This is the same as the above, but easier to read
-# {{ with index (default dict .tenants) "tenant1" }}
-#   {{ with index (default dict .clusters) "cluster1" }}
-#     {{ .addons_version }}
-#   {{ else }}
-#     {{ with index (default dict .environments) "dev" }}
-#       {{ .addons_version }}
-#       {{ else }}
-#         {{ .addons_version }}
-#     {{ end }}
-#   {{ end }}
-# {{ else }}
-#     {{ .addons_version }}
-# {{ end }}
+
   template:
     metadata:
       name: 'stacks-guestbook' # 'name' field of the Secret
