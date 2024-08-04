@@ -1,4 +1,3 @@
-{{- $kubeVersion := .Values.kubernetes_version }}
 {{- $namespace := .Values.namespace }}
 {{- $useSelector := .Values.useSelector -}}
 {{- $useStack := .Values.useStack -}}
@@ -90,24 +89,28 @@ spec:
       generators:
       - matrix:
           generators:
-          - git:
-              repoURL: {{ $repoURLGit }}
-              revision: {{ $repoURLGitRevision }}
-              files:
-              - path: {{ $stackPathConfigPrefix }}{{ $kubeVersion}}{{ $stackPathConfig }}
-          - git:
-              repoURL: {{ $repoURLGit }}
-              revision: {{ $repoURLGitRevision }}
-              files:
-              - path: {{ $stackPathPrefix }}{{ $kubeVersion}}{{ $stackPath }}
     {{- end }}
-      - clusters:
-          selector:
-            matchLabels:
-              argocd.argoproj.io/secret-type: cluster
-            {{- if and $addon.selector $useSelector }}
-              {{- toYaml $addon.selector | nindent 14 }}
-            {{- end }}
+          - clusters: # for reason this is need it as second in the matrix, if not the above extracting .tenants doesn't work
+              selector:
+                matchLabels:
+                  argocd.argoproj.io/secret-type: cluster
+              {{- if and $addon.selector $useSelector }}
+                {{- toYaml $addon.selector | nindent 16 }}
+              {{- end }}
+    {{- if $useStack }}
+          - git:
+              repoURL: {{ $repoURLGit }}
+              revision: {{ $repoURLGitRevision }}
+              files:
+              - path: '{{ $stackPathConfigPrefix }}{{`{{.metadata.annotations.kubernetes_version}}`}}{{ $stackPathConfig }}'
+      - git:
+          repoURL: {{ $repoURLGit }}
+          revision: {{ $repoURLGitRevision }}
+          files:
+          - path: '{{ $stackPathPrefix }}{{`{{.metadata.annotations.kubernetes_version}}`}}{{ $stackPath }}'
+    {{- end }}
+
+
   template:
     metadata:
       name: addon-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.nameNormalized}}`}}{{ end }}
@@ -164,6 +167,8 @@ spec:
           valuesObject:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          values: |
+            {{`{{ . | mustToPrettyJson }}`}}
       {{- if $addon.resources }}
       - repoURL: {{ $repoURLValues }}
         targetRevision: {{ $repoURLValuesRevision }}
