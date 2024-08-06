@@ -8,7 +8,7 @@ metadata:
     environment: dev
     tenant: tenant1
     enable_metrics_server: "true"
-    kubernetes_version: "1.30"
+    kubernetes_version: "1.29"
   annotations:
     #argocd.argoproj.io/kubernetes-version: "1.30"
 
