@@ -1,4 +1,4 @@
-addons_version: "-default" # this can be also be a version like v1.5
+addons_version: "default" # this can be also be a version like v1.5
 tenants:
   tenant1:
     addons_version: v1.3
