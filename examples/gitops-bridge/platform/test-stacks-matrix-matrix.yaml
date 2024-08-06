@@ -19,15 +19,14 @@ spec:
               repoURL: https://gitea.cnoe.localtest.me:8443/giteaAdmin/idpbuilder-localdev-stacks-test-stacks.git
               revision: HEAD
               files:
-              - path: stacks/stack-k8sv{{.metadata.annotations.kubernetes_version}}-config.yaml
-              # - path: stacks/stack-k8sv{{.metadata.annotations.kubernetes_version}}-config.yaml # this doesn't work for some reason
+              - path: stacks/k8s-v{{.metadata.labels.kubernetes_version}}/addons-config.yaml
               values:
-                test_kubernetes_version: '{{.metadata.annotations.kubernetes_version}}'
+                test_kubernetes_version: '{{.metadata.labels.kubernetes_version}}'
       - git:
           repoURL: https://gitea.cnoe.localtest.me:8443/giteaAdmin/idpbuilder-localdev-stacks-test-stacks.git
           revision: HEAD
           files:
-          - path: 'stacks/stack-k8sv{{.metadata.annotations.kubernetes_version}}-addons{{- $tenant := default dict (index .tenants .metadata.labels.tenant) -}}
+          - path: 'stacks/k8s-v{{.metadata.labels.kubernetes_version}}/addons-{{- $tenant := default dict (index .tenants .metadata.labels.tenant) -}}
           {{- $cluster := index (default dict (index $tenant "clusters")) .name -}}
           {{- $env := index (default dict (index $tenant "environments")) .metadata.labels.environment -}}
           {{- if $cluster -}}
@@ -41,19 +40,10 @@ spec:
           {{- end -}}.yaml'
           values:
             test_addons_version: '{{.addons_version}}'
-            test_kubernetes_version: '{{.metadata.annotations.kubernetes_version}}'
-            test_path: 'stacks/stack-k8sv{{.metadata.annotations.kubernetes_version}}-addons{{- $tenant := default dict (index .tenants .metadata.labels.tenant) -}}
-          {{- $cluster := index (default dict (index $tenant "clusters")) .name -}}
-          {{- $env := index (default dict (index $tenant "environments")) .metadata.labels.environment -}}
-          {{- if $cluster -}}
-            {{ $cluster.addons_version }}
-          {{- else if $env -}}
-            {{ $env.addons_version }}
-          {{- else if $tenant -}}
-            {{ $tenant.addons_version }}
-          {{- else -}}
-            {{ .addons_version }}
-          {{- end -}}.yaml'
+            test_kubernetes_version: '{{.metadata.labels.kubernetes_version}}'
+            test_major: '{{- $version := .addons_version -}}
+{{- $versionWithoutV := regexReplaceAll "^v" $version "" -}}
+{{- $majorMinor := regexReplaceAll "\\.\\d+$" $versionWithoutV "" -}}{{- $majorMinor -}}'
             test_json:  |
               {{ . | mustToPrettyJson }}
 
