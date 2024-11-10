@@ -9,7 +9,10 @@
   "postCreateCommand": ".devcontainer/postCreateCommand.sh",
   "workspaceFolder": "/home/vscode/idpbuilder",
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/idpbuilder,type=bind",
+  "hostRequirements": {
+    "cpus": 4
+  },
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/vscode/idpbuilder/idpbuilder"
+    "PATH": "${containerEnv:PATH}:/home/vscode/idpbuilder"
   }
 }

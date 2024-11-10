@@ -1,0 +1,34 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{values.name | dump}}
+  description: This is a basic example application
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-label-selector: 'entity-id=${{values.name}}'
+    backstage.io/kubernetes-cluster: workshop
+    argocd/app-name: ${{values.name | dump}}
+  links:
+    - url: https://cnoe.localtest.me:8443/gitea
+      title: Repo URL
+      icon: github
+spec:
+  owner: guests
+  lifecycle: experimental
+  type: service
+  system: ${{values.name | dump}}
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ${{values.name | dump}}
+  description: An example system for demonstration purposes
+  links:
+    - url: https://cnoe.localtest.me:8443/gitea/giteaAdmin/${{values.name}}
+      title: CNOE Repo 
+      icon: github
+spec:
+  owner: guests
+  lifecycle: experimental
+  type: service
