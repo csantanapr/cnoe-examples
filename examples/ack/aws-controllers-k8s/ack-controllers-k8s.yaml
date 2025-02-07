@@ -8,25 +8,37 @@ spec:
   sources:
     - chart: aws-controllers-k8s/iam-chart
       repoURL: public.ecr.aws
-      targetRevision: '1.3.7'
+      targetRevision: '1.3.16'
       helm:
         releaseName: iam-controller
         valueFiles:
           - $values/iam-controller/values.yaml
+        valuesObject:
+          aws:
+            # If specified, use the AWS region for AWS API calls
+            region: "us-east-1"
     - chart: aws-controllers-k8s/ec2-chart
       repoURL: public.ecr.aws
-      targetRevision: '1.2.5'
+      targetRevision: '1.3.3'
       helm:
         releaseName: ec2-controller
         valueFiles:
           - $values/ec2-controller/values.yaml
+        valuesObject:
+          aws:
+            # If specified, use the AWS region for AWS API calls
+            region: "us-east-1"
     - chart: aws-controllers-k8s/eks-chart
       repoURL: public.ecr.aws
-      targetRevision: '1.3.4'
+      targetRevision: '1.6.0'
       helm:
         releaseName: eks-controller
         valueFiles:
           - $values/eks-controller/values.yaml
+        valuesObject:
+          aws:
+            # If specified, use the AWS region for AWS API calls
+            region: "us-east-1"
     - repoURL: cnoe://manifests
       targetRevision: HEAD
       ref: values

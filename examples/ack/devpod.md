@@ -80,3 +80,8 @@ Delete the ArgoCD App with cascading, wait for EKS Cluster to be remove. You can
 ```sh
 kubectl delete app my-cluster -n argocd
 ```
+
+
+#Notes
+export INSTANCE_ID=$(TOKEN=`curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` && curl -s -H "X-aws-ec2-metadata-token: $TOKEN"  http://169.254.169.254/latest/meta-data/instance-id)
+aws ec2 modify-instance-metadata-options --instance-id $INSTANCE_ID --http-put-response-hop-limit 4 --http-endpoint enabled --region $AWS_REGION
