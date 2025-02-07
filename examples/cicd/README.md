@@ -4,6 +4,7 @@ Using Backstage, Argo Workflows, Argo Events, and Argo CD to deploy application 
 
 The example create two git repositories one for the application and continues integration and the other for the continues delivery
 
+If running on Linux (ie EC2), you might need to run this:
 ```bash
 # kernel configurations
 sudo sysctl fs.inotify.max_user_instances=1280
@@ -15,7 +16,7 @@ Create Environment
 idpbuilder create -p . --use-path-routing
 ```
 
-Wait until all Argo CD Apps are Synced and Healthy
+Wait until all Argo CD Apps are Synced and Healthy (This takes about 5 minutes)
 Use helper script:
 ```bash
 ./monitor-argocd-apps.sh keycloak backstage argo-workflows

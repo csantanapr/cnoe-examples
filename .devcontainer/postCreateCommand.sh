@@ -20,4 +20,7 @@ mkdir $HOME/.kube
 echo "source <(kubectl completion bash)" >> $HOME/.bashrc
 echo "alias k=kubectl" >> $HOME/.bashrc
 echo "complete -F __start_kubectl k" >> $HOME/.bashrc
+# if docker network kind is not exist, create it
+if [ -z "$(docker network ls | grep kind)" ]; then
 docker network create -d=bridge -o com.docker.network.bridge.enable_ip_masquerade=true -o com.docker.network.driver.mtu=1500 --subnet fc00:f853:ccd:e793::/64 kind
+fi

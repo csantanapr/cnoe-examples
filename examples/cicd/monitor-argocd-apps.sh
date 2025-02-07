@@ -2,7 +2,6 @@
 # Function to check the health status of an application
 check_health_status() {
   local app_name=$1
-  echo kubectl get applications -n argocd | awk -v app="$app_name" '$1 == app {print $3}'
   kubectl get applications -n argocd | awk -v app="$app_name" '$1 == app {print $3}'
 }
 # Check if at least one application name is passed as argument
