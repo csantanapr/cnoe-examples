@@ -1,0 +1,53 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: podidentity.kro.run
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: PodIdentityACK
+    spec:
+      name: string
+      clusterName: string
+      policyARN: string
+      namespace: string
+      serviceAccount: string
+
+  resources:
+  - id: role
+    template:
+      apiVersion: iam.services.k8s.aws/v1alpha1
+      kind: Role
+      metadata:
+        name: ${schema.spec.name}
+      spec:
+        name: ${schema.spec.name}
+        policies:
+        - ${schema.spec.policyARN}
+        assumeRolePolicyDocument: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "pods.eks.amazonaws.com"
+                },
+                "Action": [
+                  "sts:AssumeRole",
+                  "sts:TagSession"
+                ]
+              }
+            ]
+          }
+  - id: podidentityassociation
+    template:
+      apiVersion: eks.services.k8s.aws/v1alpha1
+      kind: PodIdentityAssociation
+      metadata:
+        name: ${schema.spec.name}
+      spec:
+        clusterName: ${schema.spec.clusterName}
+        roleARN: ${role.status.ackResourceMetadata.arn}
+        serviceAccount: ${schema.spec.serviceAccount}
+        namespace: ${schema.spec.namespace}

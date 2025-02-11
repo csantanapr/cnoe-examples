@@ -1,0 +1,47 @@
+apiVersion: kro.run/v1alpha1
+kind: PodIdentityACK
+metadata:
+  name: ack-ec2
+  namespace: default
+spec:
+  name: ack-ec2
+  clusterName: testcluster32
+  policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+  namespace: ack-system
+  serviceAccount: ack-ec2-controller
+---
+apiVersion: kro.run/v1alpha1
+kind: PodIdentityACK
+metadata:
+  name: ack-eks
+  namespace: default
+spec:
+  name: ack-eks
+  clusterName: testcluster32
+  policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+  namespace: ack-system
+  serviceAccount: ack-eks-controller
+---
+apiVersion: kro.run/v1alpha1
+kind: PodIdentityACK
+metadata:
+  name: ack-iam
+  namespace: default
+spec:
+  name: ack-iam
+  clusterName: testcluster32
+  policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+  namespace: ack-system
+  serviceAccount: ack-iam-controller
+---
+apiVersion: kro.run/v1alpha1
+kind: PodIdentityACK
+metadata:
+  name: ack-s3
+  namespace: default
+spec:
+  name: ack-s3
+  clusterName: testcluster32
+  policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+  namespace: ack-system
+  serviceAccount: ack-s3-controller

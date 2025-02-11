@@ -1,0 +1,127 @@
+# Override the name of the chart
+nameOverride: ""
+# Override the full name of the chart
+fullnameOverride: ""
+
+# Additional labels that should be applied to all resources
+additionalLabels: {}
+  # app: kro
+
+image:
+  # The location of the container image repository
+  repository: ghcr.io/kro-run/kro/controller
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.2.1"
+  # Ignores the repository and tag settings and uses the controllers ko entrypoint.
+  ko: false
+  # Image pull policy (IfNotPresent: pull the image only if it is not present locally)
+  pullPolicy: IfNotPresent
+
+# List of secrets for pulling images from a private registry
+imagePullSecrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+deployment:
+  # Number of replicas for the Pods to run
+  replicaCount: 1
+  # Port that the container will expose
+  containerPort: 8080
+  # Annotations to add to the Pod
+  podAnnotations: {}
+  # Labels to add to the Pod
+  podLabels: {}
+  # Security context settings at the Pod level
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  # Security context settings at the container level
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    privileged: false
+    capabilities:
+      drop:
+        - ALL
+  # Resource requests and limits settings
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations: []
+  affinity: {}
+  priorityClassName: ""
+  # Specifies the hostname of the Pod.
+  # If not specified, the pod's hostname will be set to a system-defined value.
+  hostNetwork: false
+  # Set DNS policy for the pod.
+  # Defaults to "ClusterFirst".
+  # Valid values are 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'.
+  # To have DNS options set along with hostNetwork, you have to specify DNS policy
+  # explicitly to 'ClusterFirstWithHostNet'.
+  dnsPolicy: ClusterFirst
+  # Additional volume settings for Pods
+  extraVolumes: []
+  # Additional volume mount settings for Pods
+  extraVolumeMounts: []
+
+# Application configuration settings
+config:
+  # Allow kro to delete CRDs
+  allowCRDDeletion: false
+  # The address the metric endpoint binds to
+  metricsBindAddress: :8078
+  # The address the probe endpoint binds to
+  healthProbeBindAddress: :8079
+  # The number of resource graph definition reconciles to run in parallel
+  resourceGraphDefinitionConcurrentReconciles: 1
+  # The number of dynamic controller reconciles to run in parallel
+  dynamicControllerConcurrentReconciles: 1
+  # The log level verbosity. 0 is the least verbose, 5 is the most verbose
+  logLevel: 3
+
+metrics:
+  service:
+    # Set to true to automatically create a Kubernetes Service resource for the
+    # Prometheus metrics server endpoint in controller
+    create: false
+    type: "ClusterIP"
+    # Port for the metrics service
+    port: 8080
+  serviceMonitor:
+    # -- Whether to create a ServiceMonitor
+    enabled: false
+    # -- Set of labels to transfer from the Kubernetes Service onto the target
+    additionalLabels: {}
+    # -- Set how frequently Prometheus should scrape
+    interval: 1m
+    # -- Set timeout for scrape
+    scrapeTimeout: 10s
+    # -- Set path to metrics path
+    telemetryPath: /metrics
+    # -- Set of labels to transfer from the Kubernetes Service onto the target
+    targetLabels: []
+    # -- MetricRelabelConfigs to apply to samples before ingestion
+    metricRelabelings: []
+    # - action: replace
+    #   replacement: my-cluster
+    #   targetLabel: cluster
+    relabelings: []
+    # - action: replace
+    #   replacement: my-cluster
+    #   targetLabel: cluster

@@ -1,0 +1,11 @@
+apiVersion: kro.run/v1alpha1
+kind: WebApp
+metadata:
+  name: my-webapp
+spec:
+  name: my-webapp
+  image: bitnami/nginx
+  port: 8080
+  ingress:
+    enabled: true # this will expose unathenticated alb
+  s3bucketName: "my-bucket"

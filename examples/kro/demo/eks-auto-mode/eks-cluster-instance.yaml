@@ -1,0 +1,8 @@
+apiVersion: kro.run/v1alpha1
+kind: EKSCluster
+metadata:
+  name: testcluster32
+spec:
+  name: testcluster32
+  version: "1.32"
+  region: us-east-1

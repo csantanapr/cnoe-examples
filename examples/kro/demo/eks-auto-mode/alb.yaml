@@ -1,0 +1,9 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  namespace: game-2048
+  labels:
+    app.kubernetes.io/name: LoadBalancerController
+  name: alb
+spec:
+  controller: eks.amazonaws.com/alb
