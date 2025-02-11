@@ -11,8 +11,10 @@ spec:
       clusterName: string | default="kro"
       policyARN: string | default=""
       namespace: string | default=default
+      serviceAccount: string | default=default
     status:
-      serviceAccount: ${serviceaccount.metadata.name}
+      roleArn: ${role.status.ackResourceMetadata.arn}
+      podIdentityArn: ${podidentityassociation.status.ackResourceMetadata.arn}
 
 
   resources:
@@ -22,6 +24,7 @@ spec:
       kind: Role
       metadata:
         name: ${schema.spec.name}-role
+        namespace: ${schema.metadata.namespace}
       spec:
         name: ${schema.spec.name}-role
         policies:
@@ -43,18 +46,9 @@ spec:
             ]
           }
 
-  - id: serviceaccount
-    template:
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: ${schema.spec.name}
-        namespace: ${schema.spec.namespace}
-        labels:
-          kro.run/depend-on: ${podidentityassociation.metadata.name}
-
-
   - id: podidentityassociation
+    readyWhen:
+    - ${podidentityassociation.status.conditions.exists(x, x.type == 'ACK.ResourceSynced' && x.status == "True")} #checl on ACK condition
     template:
       apiVersion: eks.services.k8s.aws/v1alpha1
       kind: PodIdentityAssociation

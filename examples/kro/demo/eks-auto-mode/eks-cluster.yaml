@@ -11,6 +11,7 @@ spec:
       name: string
       version: string
       region: string
+      foo: string
     status:
       networkingInfo:
         vpcID: ${clusterVPC.status.vpcID}
@@ -29,6 +30,7 @@ spec:
           name: kro-cluster-vpc
           annotations:
             services.k8s.aws/region: ${schema.spec.region}
+            foo: ${schema.spec.foo}
         spec:
           cidrBlocks:
             - 192.168.0.0/16

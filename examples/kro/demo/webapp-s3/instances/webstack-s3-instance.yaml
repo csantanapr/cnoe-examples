@@ -1,7 +1,7 @@
 apiVersion: kro.run/v1alpha1
 kind: WebStack
 metadata:
-  name: test-app
+  name: kro-demo
 spec:
   name: kro-demo-1234
   image: candonov/s3-demo-app

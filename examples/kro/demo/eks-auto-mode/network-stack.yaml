@@ -1,0 +1,110 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: networkingstack.kro.run
+spec:
+  # CRD Schema
+  schema:
+    apiVersion: v1alpha1
+    kind: NetworkingStack
+    spec:
+      name: string
+      region: string | default="us-east-1"
+    status:
+      networkingInfo:
+        vpcID: ${clusterVPC.status.vpcID}
+        subnetAZA: ${clusterSubnetA.status.subnetID}
+        subnetAZB: ${clusterSubnetB.status.subnetID}
+  # resources
+  resources:
+    - id: clusterVPC
+      readyWhen:
+        - ${clusterVPC.status.state == "available"}
+      template:
+        apiVersion: ec2.services.k8s.aws/v1alpha1
+        kind: VPC
+        metadata:
+          name: ${schema.spec.name}
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          cidrBlocks:
+            - 192.168.0.0/16
+          enableDNSSupport: true
+          enableDNSHostnames: true
+          tags:
+          - key: Name
+            value: ${schema.spec.name}
+    - id: clusterInternetGateway
+      template:
+        apiVersion: ec2.services.k8s.aws/v1alpha1
+        kind: InternetGateway
+        metadata:
+          name: ${schema.spec.name}
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          vpc: ${clusterVPC.status.vpcID}
+          tags:
+          - key: Name
+            value: ${schema.spec.name}
+    - id: clusterRouteTable
+      template:
+        apiVersion: ec2.services.k8s.aws/v1alpha1
+        kind: RouteTable
+        metadata:
+          name: ${schema.spec.name}-public
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          vpcID: ${clusterVPC.status.vpcID}
+          routes:
+            - destinationCIDRBlock: 0.0.0.0/0
+              gatewayID: ${clusterInternetGateway.status.internetGatewayID}
+          tags:
+          - key: Name
+            value: ${schema.spec.name}
+    - id: clusterSubnetA
+      readyWhen:
+        - ${clusterSubnetA.status.state == "available"}
+      template:
+        apiVersion: ec2.services.k8s.aws/v1alpha1
+        kind: Subnet
+        metadata:
+          name: ${schema.spec.name}-${schema.spec.region}a
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          availabilityZone: ${schema.spec.region}a
+          cidrBlock: 192.168.0.0/18
+          vpcID: ${clusterVPC.status.vpcID}
+          routeTables:
+            - ${clusterRouteTable.status.routeTableID}
+          mapPublicIPOnLaunch: true
+          tags:
+          - key: Name
+            value: ${schema.spec.name}-${schema.spec.region}b
+          - key: kubernetes.io/role/elb
+            value: "1"
+    - id: clusterSubnetB
+      template:
+        apiVersion: ec2.services.k8s.aws/v1alpha1
+        kind: Subnet
+        metadata:
+          name: ${schema.spec.name}-${schema.spec.region}b
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          availabilityZone: ${schema.spec.region}b
+          cidrBlock: 192.168.64.0/18
+          vpcID: ${clusterVPC.status.vpcID}
+          routeTables:
+            - ${clusterRouteTable.status.routeTableID}
+          mapPublicIPOnLaunch: true
+          tags:
+          - key: Name
+            value: ${schema.spec.name}-${schema.spec.region}b
+          - key: kubernetes.io/role/elb
+            value: "1"
+
+

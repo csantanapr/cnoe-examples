@@ -1,0 +1,6 @@
+apiVersion: kro.run/v1alpha1
+kind: NetworkingStack
+metadata:
+  name: eks-auto-2
+spec:
+  name: eks-auto-2

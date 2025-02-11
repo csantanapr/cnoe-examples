@@ -1,0 +1,113 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: ekscluster.kro.run
+spec:
+  # CRD Schema
+  schema:
+    apiVersion: v1alpha1
+    kind: EKSClusterAuto
+    spec:
+      name: string
+      version: string
+      region: string
+      subnetAZA: string
+      subnetAZB: string
+    status:
+      clusterARN: ${cluster.status.ackResourceMetadata.arn}
+      ready: ${cluster.status.status == "ACTIVE"}
+  # resources
+  resources:
+    - id: clusterRole
+      template:
+        apiVersion: iam.services.k8s.aws/v1alpha1
+        kind: Role
+        metadata:
+          name: ${schema.spec.name}-cluster-role
+        spec:
+          name: ${schema.spec.name}-cluster-role
+          description: "kro created cluster cluster role"
+          policies:
+            - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+            - arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy
+            - arn:aws:iam::aws:policy/AmazonEKSComputePolicy
+            - arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy
+            - arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy
+          assumeRolePolicyDocument: |
+            {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "eks.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole",
+                    "sts:TagSession"
+                  ]
+                }
+              ]
+            }
+    - id: clusterNodeRole
+      template:
+        apiVersion: iam.services.k8s.aws/v1alpha1
+        kind: Role
+        metadata:
+          name: ${schema.spec.name}-node-role
+        spec:
+          name: ${schema.spec.name}-node-role
+          description: "kro created cluster node role"
+          policies:
+            - arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy
+            - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly
+            - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+          assumeRolePolicyDocument: |
+            {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "ec2.amazonaws.com"
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            }
+    - id: cluster
+      readyWhen:
+        - ${cluster.status.status == "ACTIVE"}
+      template:
+        apiVersion: eks.services.k8s.aws/v1alpha1
+        kind: Cluster
+        metadata:
+          name: ${schema.spec.name}
+          annotations:
+            services.k8s.aws/region: ${schema.spec.region}
+        spec:
+          name: ${schema.spec.name}
+          accessConfig:
+            authenticationMode: "API"
+            bootstrapClusterCreatorAdminPermissions: true
+          roleARN: ${clusterRole.status.ackResourceMetadata.arn}
+          version: ${schema.spec.version}
+          resourcesVPCConfig:
+            endpointPrivateAccess: false
+            endpointPublicAccess: true
+            subnetIDs:
+              - ${schema.spec.subnetAZA}
+              - ${schema.spec.subnetAZB}
+          computeConfig:
+            enabled: true
+            nodeRoleARN: ${clusterNodeRole.status.ackResourceMetadata.arn}
+            nodePools:
+              - system
+              - general-purpose
+          kubernetesNetworkConfig:
+            ipFamily: ipv4
+            elasticLoadBalancing:
+              enabled: true
+          storageConfig:
+            blockStorage:
+              enabled: true

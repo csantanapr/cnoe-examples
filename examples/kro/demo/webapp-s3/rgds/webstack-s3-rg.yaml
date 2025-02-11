@@ -24,6 +24,7 @@ spec:
       availableReplicas: ${webapp.status.availableReplicas}
       s3ARN: ${s3bucket.status.s3ARN}
       url: ${webapp.status.url}
+      roleArn: ${podidentity.status.roleArn}
 
 
   resources:
@@ -35,12 +36,13 @@ spec:
       kind: WebApp
       metadata:
         name: ${schema.spec.name}
+        annotations:
+          aws-role-arn: ${podidentity.status.roleArn} # this creates implicit dependency on podidentity
       spec:
         name: ${schema.spec.name}
         image: ${schema.spec.image}
         port: ${schema.spec.port}
         replicas: ${schema.spec.replicas}
-        serviceAccount: ${podidentity.status.serviceAccount}
         ingress:
           enabled: ${schema.spec.ingress.enabled}
         s3bucketName: ${s3bucket.status.s3ARN.substring(13)}
@@ -64,6 +66,8 @@ spec:
   - id: podidentity
     includeWhen:
     - ${schema.spec.s3bucket.enabled}
+    readyWhen:
+    - ${podidentity.status.conditions.exists(x, x.type == 'InstanceSynced' && x.status == "True")} # Check on kro conditions
     template:
       apiVersion: kro.run/v1alpha1
       kind: PodIdentity
@@ -73,3 +77,5 @@ spec:
         name: ${schema.spec.name}
         policyARN: ${s3bucket.status.s3PolicyARN}
         clusterName: ${schema.spec.clusterName}
+        namespace: ${schema.metadata.namespace}
+        serviceAccount: ${schema.spec.name}

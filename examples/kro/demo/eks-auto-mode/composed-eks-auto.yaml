@@ -1,0 +1,42 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: ekscomposed.kro.run
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: EKSComposed
+    spec:
+      name: string
+      clusterName: string
+      policyARN: string
+      namespace: string
+      serviceAccount: string
+      version: string
+
+  resources:
+  - id: cluster
+    readyWhen:
+    - ${cluster.status.ready == true}
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: EKSCluster
+      metadata:
+        name: testcluster32
+      spec:
+        name: testcluster32
+        version: "1.32"
+        region: us-east-1
+  - id: role
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: PodIdentityACK
+      metadata:
+        name: ack-ec2
+        namespace: default
+      spec:
+        name: ack-ec2
+        clusterName: ${cluster.spec.name}
+        policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+        namespace: ack-system
+        serviceAccount: ack-ec2-controller

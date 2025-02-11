@@ -1,0 +1,10 @@
+apiVersion: kro.run/v1alpha1
+kind: PodIdentity
+metadata:
+  name: test
+spec:
+  name: test
+  policyARN: arn:aws:iam::aws:policy/AdministratorAccess
+  clusterName: testcluster32
+  serviceAccount: test
+  namespace: default

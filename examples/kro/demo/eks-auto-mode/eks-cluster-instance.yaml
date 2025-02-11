@@ -6,3 +6,4 @@ spec:
   name: testcluster32
   version: "1.32"
   region: us-east-1
+  foo: bar

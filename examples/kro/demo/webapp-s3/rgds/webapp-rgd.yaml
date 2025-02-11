@@ -45,7 +45,7 @@ spec:
               app.kubernetes.io/name: ${schema.spec.name}
               app: ${schema.spec.name}
           spec:
-            serviceAccountName: ${schema.spec.serviceAccount}
+            serviceAccountName: ${serviceaccount.metadata.name}
             containers:
             - name: s3-demo
               image: ${schema.spec.image}
@@ -104,3 +104,10 @@ spec:
                   name: ${service.metadata.name}
                   port:
                     number: 80
+
+  - id: serviceaccount
+    template:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: ${schema.spec.name}
