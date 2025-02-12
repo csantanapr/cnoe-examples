@@ -1,7 +1,7 @@
 apiVersion: kro.run/v1alpha1
 kind: ResourceGraphDefinition
 metadata:
-  name: ekscluster.kro.run
+  name: ekscluster.auto.kro.run
 spec:
   # CRD Schema
   schema:
@@ -10,11 +10,13 @@ spec:
     spec:
       name: string
       version: string
-      region: string
+      region: string | default="us-east-1"
       subnetAZA: string
       subnetAZB: string
     status:
       clusterARN: ${cluster.status.ackResourceMetadata.arn}
+      cdata: ${cluster.status.certificateAuthority.data}
+      endpoint: ${cluster.status.endpoint}
       ready: ${cluster.status.status == "ACTIVE"}
   # resources
   resources:

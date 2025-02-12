@@ -10,7 +10,7 @@ spec:
     spec:
       name: string
       version: string
-      region: string
+      region: string | default="us-east-1"
       foo: string
     status:
       networkingInfo:

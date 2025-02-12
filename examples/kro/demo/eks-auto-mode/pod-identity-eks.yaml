@@ -1,0 +1,69 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: podidentityeks.kro.run
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: PodIdentityEKS
+    spec:
+      name: string
+      clusterName: string
+      policyARN: string | default="arn:aws:iam::aws:policy/AdministratorAccess"
+      region: string | default="us-east-1"
+
+  resources:
+  - id: podidentityassociationackeks
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: PodIdentity
+      metadata:
+        name: ${schema.spec.name}-ack-eks
+      spec:
+        name: ${schema.spec.name}-ack-eks
+        region: ${schema.spec.region}
+        clusterName: ${schema.spec.clusterName}
+        policyARN: ${schema.spec.policyARN}
+        serviceAccount: ack-eks-controller
+        namespace: ack-system
+  - id: podidentityassociationackiam
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: PodIdentity
+      metadata:
+        name: ${schema.spec.name}-ack-iam
+      spec:
+        name: ${schema.spec.name}-ack-iam
+        region: ${schema.spec.region}
+        clusterName: ${schema.spec.clusterName}
+        policyARN: ${schema.spec.policyARN}
+        serviceAccount: ack-iam-controller
+        namespace: ack-system
+  - id: podidentityassociationacks3
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: PodIdentity
+      metadata:
+        name: ${schema.spec.name}-ack-s3
+      spec:
+        name: ${schema.spec.name}-ack-s3
+        region: ${schema.spec.region}
+        clusterName: ${schema.spec.clusterName}
+        policyARN: ${schema.spec.policyARN}
+        serviceAccount: ack-s3-controller
+        namespace: ack-system
+  - id: podidentityassociationackec2
+    readyWhen:
+    - ${podidentityassociationackec2.status.conditions.exists(x, x.type == 'InstanceSynced' && x.status == "True")} # Check on kro conditions
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: PodIdentity
+      metadata:
+        name: ${schema.spec.name}-ack-s3
+      spec:
+        name: ${schema.spec.name}-ack-s3
+        region: ${schema.spec.region}
+        clusterName: ${schema.spec.clusterName}
+        policyARN: ${schema.spec.policyARN}
+        serviceAccount: ack-s3-controller
+        namespace: ack-system

@@ -8,35 +8,56 @@ spec:
     kind: EKSComposed
     spec:
       name: string
-      clusterName: string
-      policyARN: string
-      namespace: string
-      serviceAccount: string
-      version: string
+      version: string | default="1.32"
+      region: string | default="us-east-1"
 
   resources:
+  - id: network
+    template:
+      apiVersion: kro.run/v1alpha1
+      kind: NetworkingStack
+      metadata:
+        name: ${schema.spec.name}
+      spec:
+        name: ${schema.spec.name}
+        region: ${schema.spec.region}
   - id: cluster
     readyWhen:
     - ${cluster.status.ready == true}
     template:
       apiVersion: kro.run/v1alpha1
-      kind: EKSCluster
+      kind: EKSClusterAuto
       metadata:
-        name: testcluster32
+        name: ${schema.spec.name}
       spec:
-        name: testcluster32
-        version: "1.32"
-        region: us-east-1
-  - id: role
+        name: ${schema.spec.name}
+        region: ${schema.spec.region}
+        version: ${schema.spec.version}
+        subnetAZA: ${network.status.networkingInfo.subnetAZA}
+        subnetAZB: ${network.status.networkingInfo.subnetAZB}
+  - id: argocd
     template:
-      apiVersion: kro.run/v1alpha1
-      kind: PodIdentityACK
+      apiVersion: v1
+      kind: Secret
       metadata:
-        name: ack-ec2
-        namespace: default
-      spec:
-        name: ack-ec2
-        clusterName: ${cluster.spec.name}
-        policyARN: arn:aws:iam::aws:policy/AdministratorAccess
-        namespace: ack-system
-        serviceAccount: ack-ec2-controller
+        name: ${cluster.spec.name}
+        namespace: argocd
+        labels:
+          argocd.argoproj.io/secret-type: cluster
+      type: Opaque
+      stringData:
+        name: ${cluster.spec.name}
+        server: ${cluster.status.endpoint}
+        clusterResources: "true"
+        config: |
+          {
+            "execProviderConfig": {
+              "command": "argocd-k8s-auth",
+              "args": ["aws", "--cluster-name", "${cluster.spec.name}"],
+              "apiVersion": "client.authentication.k8s.io/v1beta1"
+            },
+            "tlsClientConfig": {
+              "insecure": false,
+              "caData": ${cluster.status.cdata}
+            }
+          }

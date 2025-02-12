@@ -12,6 +12,7 @@ spec:
       policyARN: string | default=""
       namespace: string | default=default
       serviceAccount: string | default=default
+      region: string | default="us-east-1"
     status:
       roleArn: ${role.status.ackResourceMetadata.arn}
       podIdentityArn: ${podidentityassociation.status.ackResourceMetadata.arn}
@@ -54,9 +55,11 @@ spec:
       kind: PodIdentityAssociation
       metadata:
         name: ${schema.spec.name}
+        annotations:
+          services.k8s.aws/region: ${schema.spec.region}
       spec:
         clusterName: ${schema.spec.clusterName}
         roleARN: ${role.status.ackResourceMetadata.arn}
-        serviceAccount: ${schema.spec.name}
+        serviceAccount: ${schema.spec.serviceAccount}
         namespace: ${schema.spec.namespace}
 
