@@ -13,11 +13,12 @@ spec:
       region: string | default="us-east-1"
       subnetAZA: string
       subnetAZB: string
+      trigger: string | default="auto0"
     status:
       clusterARN: ${cluster.status.ackResourceMetadata.arn}
       cdata: ${cluster.status.certificateAuthority.data}
       endpoint: ${cluster.status.endpoint}
-      ready: ${cluster.status.status == "ACTIVE"}
+      clusterState: ${cluster.status.status}
   # resources
   resources:
     - id: clusterRole
@@ -113,3 +114,13 @@ spec:
           storageConfig:
             blockStorage:
               enabled: true
+    - id: configmap
+      template:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: ${schema.spec.name}
+        data:
+          clusterStatus: ${cluster.status.status}
+          custerEndpoint: ${cluster.status.endpoint}
+
